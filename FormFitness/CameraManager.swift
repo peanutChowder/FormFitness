@@ -1,41 +1,49 @@
-//
-//  CameraManager.swift
-//  FormFitness
-//
-//  Created by Jacob Feng on 9/1/24.
-//
-
 import AVFoundation
 import Combine
+import Vision
+import UIKit
 
-class CameraManager: ObservableObject {
+class CameraManager: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
-    private var cancellables = Set<AnyCancellable>()
+    @Published var setupError: String?
+    @Published var currentFrame: UIImage?
     
-    init() {
+    private var cancellables = Set<AnyCancellable>()
+    private let poseDetector = PoseDetector()
+    
+    override init() {
+        super.init()
         setupSession()
     }
     
     private func setupSession() {
         session.beginConfiguration()
         
-        AVCaptureDevice.requestAccess(for: .video) { granted in
-            if granted {
-                print("camera access!!!")
-            } else {
-                print("Camera access denied")
-            }
-        }
-        
-        
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
-              let input = try? AVCaptureDeviceInput(device: camera) else {
-            print("Failed to set up camera")
+        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+            setupError = "Failed to get camera device"
             return
         }
         
-        if session.canAddInput(input) {
-            session.addInput(input)
+        do {
+            let input = try AVCaptureDeviceInput(device: camera)
+            if session.canAddInput(input) {
+                session.addInput(input)
+            } else {
+                setupError = "Failed to add camera input to session"
+                return
+            }
+            
+            let output = AVCaptureVideoDataOutput()
+            output.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
+            if session.canAddOutput(output) {
+                session.addOutput(output)
+            } else {
+                setupError = "Failed to add video output to session"
+                return
+            }
+        } catch {
+            setupError = "Failed to create camera input: \(error.localizedDescription)"
+            return
         }
         
         session.commitConfiguration()
@@ -62,5 +70,18 @@ class CameraManager: ObservableObject {
         }
         
         session.commitConfiguration()
+    }
+}
+
+extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        
+        if let pose = poseDetector.detectPose(in: pixelBuffer),
+           let poseImage = poseDetector.drawPoseOverlay(pose: pose, on: pixelBuffer) {
+            DispatchQueue.main.async {
+                self.currentFrame = poseImage
+            }
+        }
     }
 }

@@ -15,6 +15,7 @@
 		7309FBD62C8445AA006C4B0F /* FormFitnessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBD52C8445AA006C4B0F /* FormFitnessUITests.swift */; };
 		7309FBD82C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBD72C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift */; };
 		7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBE62C8462CB006C4B0F /* CameraManager.swift */; };
+		7309FBEA2C84E47B006C4B0F /* PoseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBE92C84E47B006C4B0F /* PoseDetector.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		7309FBD52C8445AA006C4B0F /* FormFitnessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFitnessUITests.swift; sourceTree = "<group>"; };
 		7309FBD72C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFitnessUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		7309FBE62C8462CB006C4B0F /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		7309FBE92C84E47B006C4B0F /* PoseDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoseDetector.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 				7309FBE62C8462CB006C4B0F /* CameraManager.swift */,
 				7309FBBA2C8445A8006C4B0F /* FormFitnessApp.swift */,
 				7309FBBC2C8445A8006C4B0F /* ContentView.swift */,
+				7309FBE92C84E47B006C4B0F /* PoseDetector.swift */,
 				7309FBBE2C8445AA006C4B0F /* Assets.xcassets */,
 				7309FBC02C8445AA006C4B0F /* Preview Content */,
 			);
@@ -262,6 +265,7 @@
 			files = (
 				7309FBBD2C8445A8006C4B0F /* ContentView.swift in Sources */,
 				7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */,
+				7309FBEA2C84E47B006C4B0F /* PoseDetector.swift in Sources */,
 				7309FBBB2C8445A8006C4B0F /* FormFitnessApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

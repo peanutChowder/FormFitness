@@ -7,25 +7,38 @@
 
 import SwiftUI
 import AVFoundation
+import Vision
 
 struct ContentView: View {
     @StateObject private var cameraManager = CameraManager()
     
     var body: some View {
         ZStack {
-            CameraView(session: cameraManager.session)
-                .edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                Text("Hello world")
-                Spacer()
-                Button("Toggle Camera") {
-                    cameraManager.toggleCamera()
+            if let error = cameraManager.setupError {
+                Text("Camera Error: \(error)")
+                    .foregroundColor(.red)
+                    .padding()
+            } else {
+                if let currentFrame = cameraManager.currentFrame {
+                    Image(uiImage: currentFrame)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .edgesIgnoringSafeArea(.all)
+                } else {
+                    CameraView(session: cameraManager.session)
+                        .edgesIgnoringSafeArea(.all)
                 }
-                .padding()
-                .background(Color.white.opacity(0.7))
-                .cornerRadius(10)
-                .padding(.bottom, 50)
+                
+                VStack {
+                    Spacer()
+                    Button("Toggle Camera") {
+                        cameraManager.toggleCamera()
+                    }
+                    .padding()
+                    .background(Color.white.opacity(0.7))
+                    .cornerRadius(10)
+                    .padding(.bottom, 50)
+                }
             }
         }
     }
