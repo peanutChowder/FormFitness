@@ -14,6 +14,7 @@
 		7309FBCC2C8445AA006C4B0F /* FormFitnessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBCB2C8445AA006C4B0F /* FormFitnessTests.swift */; };
 		7309FBD62C8445AA006C4B0F /* FormFitnessUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBD52C8445AA006C4B0F /* FormFitnessUITests.swift */; };
 		7309FBD82C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBD72C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift */; };
+		7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBE62C8462CB006C4B0F /* CameraManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		7309FBD12C8445AA006C4B0F /* FormFitnessUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FormFitnessUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7309FBD52C8445AA006C4B0F /* FormFitnessUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFitnessUITests.swift; sourceTree = "<group>"; };
 		7309FBD72C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFitnessUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		7309FBE62C8462CB006C4B0F /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 		7309FBB92C8445A8006C4B0F /* FormFitness */ = {
 			isa = PBXGroup;
 			children = (
+				7309FBE62C8462CB006C4B0F /* CameraManager.swift */,
 				7309FBBA2C8445A8006C4B0F /* FormFitnessApp.swift */,
 				7309FBBC2C8445A8006C4B0F /* ContentView.swift */,
 				7309FBBE2C8445AA006C4B0F /* Assets.xcassets */,
@@ -258,6 +261,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7309FBBD2C8445A8006C4B0F /* ContentView.swift in Sources */,
+				7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */,
 				7309FBBB2C8445A8006C4B0F /* FormFitnessApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -422,8 +426,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FormFitness/Preview Content\"";
+				DEVELOPMENT_TEAM = W3C2QMMZ42;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FormFitness/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera for body tracking.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -450,8 +457,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"FormFitness/Preview Content\"";
+				DEVELOPMENT_TEAM = W3C2QMMZ42;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FormFitness/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app uses the camera for body tracking.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
