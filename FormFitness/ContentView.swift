@@ -9,13 +9,30 @@ import SwiftUI
 import AVFoundation
 import Vision
 
+struct DeviceRotationViewModifier: ViewModifier {
+    let action: (UIDeviceOrientation) -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .onAppear()
+            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+                action(UIDevice.current.orientation)
+            }
+    }
+}
+
+extension View {
+    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
+        self.modifier(DeviceRotationViewModifier(action: action))
+    }
+}
+
 struct ContentView: View {
     @StateObject private var cameraManager = CameraManager()
-    @Environment(\.verticalSizeClass) var verticalSizeClass
-    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    @State private var orientation = UIDeviceOrientation.unknown
     
-    var isLandscape: Bool {
-        return verticalSizeClass == .compact || horizontalSizeClass == .regular
+    var isLandscapeRight: Bool {
+        return orientation == .landscapeRight
     }
     
     var body: some View {
@@ -25,7 +42,7 @@ struct ContentView: View {
                     .foregroundColor(.red)
                     .padding()
             } else {
-                if isLandscape {
+                if isLandscapeRight {
                     if let currentFrame = cameraManager.currentFrame {
                         Image(uiImage: currentFrame)
                             .resizable()
@@ -40,6 +57,9 @@ struct ContentView: View {
                 }
             }
         }
+        .onRotate { newOrientation in
+            orientation = newOrientation
+        }
     }
 }
 
@@ -49,7 +69,7 @@ struct RotationPromptView: View {
             Image(systemName: "rotate.right")
                 .font(.system(size: 50))
                 .padding()
-            Text("Please rotate your device to landscape mode")
+            Text("Please rotate your device so that the camera is on the right.")
                 .font(.headline)
                 .multilineTextAlignment(.center)
                 .padding()
