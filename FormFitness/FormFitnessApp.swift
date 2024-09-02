@@ -6,6 +6,9 @@
 //
 
 import SwiftUI
+import OSLog
+
+let logger = Logger();
 
 @main
 struct FormFitnessApp: App {

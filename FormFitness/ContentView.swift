@@ -34,31 +34,64 @@ struct ContentView: View {
     var isLandscapeRight: Bool {
         return orientation == .landscapeRight
     }
+    @State private var selectedPose = "warrior"
+    @State private var availablePoses: [String] = []
+
     
     var body: some View {
         ZStack {
             if let error = cameraManager.setupError {
                 Text("Camera Error: \(error)")
-                    .foregroundColor(.red)
+                    .foregroundColor(.black)
                     .padding()
-            } else {
-                if isLandscapeRight {
-                    if let currentFrame = cameraManager.currentFrame {
-                        Image(uiImage: currentFrame)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .edgesIgnoringSafeArea(.all)
-                    } else {
-                        CameraView(session: cameraManager.session)
-                            .edgesIgnoringSafeArea(.all)
-                    }
+            } else if isLandscapeRight {
+                if let currentFrame = cameraManager.currentFrame {
+                    Image(uiImage: currentFrame)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .edgesIgnoringSafeArea(.all)
                 } else {
-                    RotationPromptView()
+                    CameraView(session: cameraManager.session)
+                        .edgesIgnoringSafeArea(.all)
                 }
+                
+                VStack {
+                    Spacer()
+                    if availablePoses.isEmpty {
+                        Text("No poses available")
+                            .foregroundColor(.red)
+                            .padding()
+                            .background(Color.white.opacity(0.7))
+                    } else {
+                        Picker("Select Pose", selection: $selectedPose) {
+                            ForEach(availablePoses, id: \.self) { pose in
+                                Text(pose.capitalized)
+                                    .foregroundColor(.black) // Ensure text is visible
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                        .padding()
+                        .background(Color.white.opacity(0.7))
+                    }
+                }
+            } else {
+                RotationPromptView()
             }
-        }
-        .onRotate { newOrientation in
+        }.onRotate { newOrientation in
             orientation = newOrientation
+        }
+        .onChange(of: selectedPose) { _, newPose in
+            cameraManager.changePerfectFormPose(to: newPose)
+        }
+        .onAppear {
+            PerfectFormManager.shared.loadPerfectForms()
+            self.availablePoses = Array(PerfectFormManager.shared.perfectForms.keys)
+            if let firstPose = availablePoses.first {
+                self.selectedPose = firstPose
+            }
+            
+            // Diagnostic logger.debug
+            logger.debug("Available poses: \(availablePoses)")
         }
     }
 }
@@ -98,6 +131,11 @@ struct CameraView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {}
+}
+
+struct PerfectFormPose {
+    let image: UIImage
+    let pose: VNHumanBodyPoseObservation
 }
 
 #Preview {

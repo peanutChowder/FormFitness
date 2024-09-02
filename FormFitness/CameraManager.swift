@@ -10,6 +10,7 @@ class CameraManager: NSObject, ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     private let poseDetector = PoseDetector()
+    private var currentPerfectFormPose: String = "warrior" // Default pose, you can change this
     
     override init() {
         super.init()
@@ -52,17 +53,22 @@ class CameraManager: NSObject, ObservableObject {
             self?.session.startRunning()
         }
     }
-}
+    
+    func changePerfectFormPose(to pose: String) {
+           currentPerfectFormPose = pose
+       }
+   }
 
-extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        
-        if let pose = poseDetector.detectPose(in: pixelBuffer),
-           let poseImage = poseDetector.drawPoseOverlay(pose: pose, on: pixelBuffer) {
-            DispatchQueue.main.async {
-                self.currentFrame = poseImage
-            }
-        }
-    }
-}
+   extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
+       func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+           guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+           
+           if let pose = poseDetector.detectPose(in: pixelBuffer),
+              let perfectFormPose = PerfectFormManager.shared.perfectForms[currentPerfectFormPose]?.pose,
+              let poseImage = poseDetector.drawPoseOverlay(pose: pose, on: pixelBuffer, perfectFormPose: perfectFormPose) {
+               DispatchQueue.main.async {
+                   self.currentFrame = poseImage
+               }
+           }
+       }
+   }

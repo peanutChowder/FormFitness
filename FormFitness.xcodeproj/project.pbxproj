@@ -16,6 +16,9 @@
 		7309FBD82C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBD72C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift */; };
 		7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBE62C8462CB006C4B0F /* CameraManager.swift */; };
 		7309FBEA2C84E47B006C4B0F /* PoseDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBE92C84E47B006C4B0F /* PoseDetector.swift */; };
+		7309FBEC2C86578E006C4B0F /* PerfectFormManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */; };
+		7309FBEE2C865902006C4B0F /* UIImagePixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */; };
+		7309FBF22C86614E006C4B0F /* StaticMovements.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +51,9 @@
 		7309FBD72C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormFitnessUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		7309FBE62C8462CB006C4B0F /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		7309FBE92C84E47B006C4B0F /* PoseDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PoseDetector.swift; sourceTree = "<group>"; };
+		7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectFormManager.swift; sourceTree = "<group>"; };
+		7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImagePixelBuffer.swift; sourceTree = "<group>"; };
+		7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = StaticMovements.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,8 +104,11 @@
 		7309FBB92C8445A8006C4B0F /* FormFitness */ = {
 			isa = PBXGroup;
 			children = (
+				7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */,
 				7309FBE62C8462CB006C4B0F /* CameraManager.swift */,
 				7309FBBA2C8445A8006C4B0F /* FormFitnessApp.swift */,
+				7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */,
+				7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */,
 				7309FBBC2C8445A8006C4B0F /* ContentView.swift */,
 				7309FBE92C84E47B006C4B0F /* PoseDetector.swift */,
 				7309FBBE2C8445AA006C4B0F /* Assets.xcassets */,
@@ -239,6 +248,7 @@
 			files = (
 				7309FBC22C8445AA006C4B0F /* Preview Assets.xcassets in Resources */,
 				7309FBBF2C8445AA006C4B0F /* Assets.xcassets in Resources */,
+				7309FBF22C86614E006C4B0F /* StaticMovements.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,7 +275,9 @@
 			files = (
 				7309FBBD2C8445A8006C4B0F /* ContentView.swift in Sources */,
 				7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */,
+				7309FBEC2C86578E006C4B0F /* PerfectFormManager.swift in Sources */,
 				7309FBEA2C84E47B006C4B0F /* PoseDetector.swift in Sources */,
+				7309FBEE2C865902006C4B0F /* UIImagePixelBuffer.swift in Sources */,
 				7309FBBB2C8445A8006C4B0F /* FormFitnessApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
