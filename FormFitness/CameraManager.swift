@@ -19,8 +19,8 @@ class CameraManager: NSObject, ObservableObject {
     private func setupSession() {
         session.beginConfiguration()
         
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
-            setupError = "Failed to get camera device"
+        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
+            setupError = "Failed to get front camera device"
             return
         }
         
@@ -51,25 +51,6 @@ class CameraManager: NSObject, ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             self?.session.startRunning()
         }
-    }
-    
-    func toggleCamera() {
-        session.beginConfiguration()
-        
-        // Remove existing input
-        guard let currentInput = session.inputs.first as? AVCaptureDeviceInput else { return }
-        session.removeInput(currentInput)
-        
-        // Add new input
-        let newPosition: AVCaptureDevice.Position = currentInput.device.position == .back ? .front : .back
-        guard let newCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: newPosition),
-              let newInput = try? AVCaptureDeviceInput(device: newCamera) else { return }
-        
-        if session.canAddInput(newInput) {
-            session.addInput(newInput)
-        }
-        
-        session.commitConfiguration()
     }
 }
 

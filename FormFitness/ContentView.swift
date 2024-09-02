@@ -11,6 +11,12 @@ import Vision
 
 struct ContentView: View {
     @StateObject private var cameraManager = CameraManager()
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    var isLandscape: Bool {
+        return verticalSizeClass == .compact || horizontalSizeClass == .regular
+    }
     
     var body: some View {
         ZStack {
@@ -19,27 +25,34 @@ struct ContentView: View {
                     .foregroundColor(.red)
                     .padding()
             } else {
-                if let currentFrame = cameraManager.currentFrame {
-                    Image(uiImage: currentFrame)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .edgesIgnoringSafeArea(.all)
-                } else {
-                    CameraView(session: cameraManager.session)
-                        .edgesIgnoringSafeArea(.all)
-                }
-                
-                VStack {
-                    Spacer()
-                    Button("Toggle Camera") {
-                        cameraManager.toggleCamera()
+                if isLandscape {
+                    if let currentFrame = cameraManager.currentFrame {
+                        Image(uiImage: currentFrame)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                    } else {
+                        CameraView(session: cameraManager.session)
+                            .edgesIgnoringSafeArea(.all)
                     }
-                    .padding()
-                    .background(Color.white.opacity(0.7))
-                    .cornerRadius(10)
-                    .padding(.bottom, 50)
+                } else {
+                    RotationPromptView()
                 }
             }
+        }
+    }
+}
+
+struct RotationPromptView: View {
+    var body: some View {
+        VStack {
+            Image(systemName: "rotate.right")
+                .font(.system(size: 50))
+                .padding()
+            Text("Please rotate your device to landscape mode")
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .padding()
         }
     }
 }
@@ -61,7 +74,6 @@ struct CameraView: UIViewRepresentable {
         let view = VideoPreviewView()
         view.videoPreviewLayer.session = session
         view.videoPreviewLayer.videoGravity = .resizeAspectFill
-        view.videoPreviewLayer.connection?.videoOrientation = .portrait
         return view
     }
     
