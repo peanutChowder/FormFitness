@@ -94,3 +94,8 @@ class PoseDetector {
         context.strokePath()
     }
 }
+
+struct PerfectFormPose {
+    let image: UIImage
+    let pose: VNHumanBodyPoseObservation
+}

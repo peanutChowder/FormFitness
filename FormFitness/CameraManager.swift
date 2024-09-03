@@ -10,7 +10,7 @@ class CameraManager: NSObject, ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     private let poseDetector = PoseDetector()
-    private var currentPerfectFormPose: String = "warrior" // Default pose, you can change this
+    private var currentPerfectFormPose: String = "downward-dog"
     
     override init() {
         super.init()

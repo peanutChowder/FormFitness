@@ -19,6 +19,8 @@
 		7309FBEC2C86578E006C4B0F /* PerfectFormManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */; };
 		7309FBEE2C865902006C4B0F /* UIImagePixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */; };
 		7309FBF22C86614E006C4B0F /* StaticMovements.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */; };
+		7309FBF42C86C38C006C4B0F /* LivePoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBF32C86C38C006C4B0F /* LivePoseView.swift */; };
+		7309FBF62C86C74B006C4B0F /* ExerciseIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectFormManager.swift; sourceTree = "<group>"; };
 		7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImagePixelBuffer.swift; sourceTree = "<group>"; };
 		7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = StaticMovements.xcassets; sourceTree = "<group>"; };
+		7309FBF32C86C38C006C4B0F /* LivePoseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePoseView.swift; sourceTree = "<group>"; };
+		7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ExerciseIcons.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,8 +114,10 @@
 				7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */,
 				7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */,
 				7309FBBC2C8445A8006C4B0F /* ContentView.swift */,
+				7309FBF32C86C38C006C4B0F /* LivePoseView.swift */,
 				7309FBE92C84E47B006C4B0F /* PoseDetector.swift */,
 				7309FBBE2C8445AA006C4B0F /* Assets.xcassets */,
+				7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */,
 				7309FBC02C8445AA006C4B0F /* Preview Content */,
 			);
 			path = FormFitness;
@@ -248,6 +254,7 @@
 			files = (
 				7309FBC22C8445AA006C4B0F /* Preview Assets.xcassets in Resources */,
 				7309FBBF2C8445AA006C4B0F /* Assets.xcassets in Resources */,
+				7309FBF62C86C74B006C4B0F /* ExerciseIcons.xcassets in Resources */,
 				7309FBF22C86614E006C4B0F /* StaticMovements.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,6 +283,7 @@
 				7309FBBD2C8445A8006C4B0F /* ContentView.swift in Sources */,
 				7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */,
 				7309FBEC2C86578E006C4B0F /* PerfectFormManager.swift in Sources */,
+				7309FBF42C86C38C006C4B0F /* LivePoseView.swift in Sources */,
 				7309FBEA2C84E47B006C4B0F /* PoseDetector.swift in Sources */,
 				7309FBEE2C865902006C4B0F /* UIImagePixelBuffer.swift in Sources */,
 				7309FBBB2C8445A8006C4B0F /* FormFitnessApp.swift in Sources */,
