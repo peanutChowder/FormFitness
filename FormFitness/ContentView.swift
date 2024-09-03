@@ -93,51 +93,76 @@ struct FavoritesView: View {
     }
 }
 
+struct RowIcon: View {
+    let imageName: String
+    let imageSize: CGFloat
+    let circleSize: CGFloat
+    let color: Color
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.white)
+                .frame(width: circleSize, height: circleSize)
+            
+            Image(imageName)
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(color)
+                .frame(width: imageSize, height: imageSize)
+        }
+    }
+}
+
+struct RowButton: View {
+    let sysName: String
+    let iconSize: CGFloat
+    let color: Color
+    
+    var body: some View {
+        ZStack {
+            Image(systemName: sysName)
+                .font(.system(size: iconSize))
+                .foregroundColor(color)
+        }
+    }
+}
+
 struct ExerciseRow: View {
     let exercise: Exercise
     @ObservedObject var store: ExerciseStore
     @State private var showingPlayOverlay = false
+    @State private var showingExerciseOverview = false
     
     var body: some View {
         HStack(spacing: 12) {
-            Button(action: {
-                showingPlayOverlay = true
-            }) {
-                Image(systemName: "play.circle.fill")
-                    .font(.system(size: 44))
-                    .foregroundColor(.blue)
-            }
-            .frame(width: 44, height: 44)
-            
-            Button(action: {
-                store.toggleFavorite(for: exercise)
-            }) {
-                Image(systemName: exercise.isFavorite ? "star.fill" : "star")
-                    .font(.system(size: 24))
-                    .foregroundColor(.yellow)
-            }
-            .frame(width: 44, height: 44)
+            RowButton(sysName: "play.circle.fill", iconSize: 44, color: .blue)
+                .onTapGesture {
+                    showingPlayOverlay = true
+                    logger.log("Play button clicked for: \(exercise.name)")
+                }
             
             Text(exercise.name)
                 .font(.headline)
             
             Spacer()
             
-            ZStack {
-                Circle()
-                    .fill(Color.white)
-                    .frame(width: 36, height: 36)
-                Image(exercise.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(Color.white)
-                    .frame(width: 30, height: 30)
-            }
+            RowButton(sysName: exercise.isFavorite ? "star.fill" : "star", iconSize: 20, color: .yellow)
+                .onTapGesture {
+                    logger.debug("Favorite button clicked for: \(exercise.name)")
+                    store.toggleFavorite(for: exercise)
+                }
+            
+            RowIcon(imageName: exercise.imageName, imageSize: 34, circleSize: 40, color: Color.white)
         }
         .padding(.vertical, 8)
         .sheet(isPresented: $showingPlayOverlay) {
             // TODO: add camera layout
             Text("Exercise Play Overlay")
+        }
+        .sheet (isPresented: $showingExerciseOverview) {
+            // TODO: add overview page & connect card tap to open page
+            Text("Exercise overview page")
         }
     }
 }
