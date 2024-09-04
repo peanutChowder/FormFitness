@@ -17,7 +17,7 @@ class PoseDetector {
             try handler.perform([request])
             return request.results?.first
         } catch {
-            logger.debug("Failed to perform pose detection: \(error)")
+            logger.debug("PoseDetector: Pose detection failed: \(error)")
             return nil
         }
     }

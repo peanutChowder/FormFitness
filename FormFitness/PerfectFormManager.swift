@@ -20,18 +20,18 @@ class PerfectFormManager {
         // Load your perfect form images here
         let poses = ["downward-dog", "test"]
         
-        logger.debug("Loading poses")
+        logger.debug("PerfectFormManager: loading")
         for pose in poses {
             if let image = UIImage(named: pose) {
                 if let pixelBuffer = image.pixelBuffer(),
                    let detectedPose = poseDetector.detectPose(in: pixelBuffer) {
                     perfectForms[pose] = PerfectFormPose(image: image, pose: detectedPose)
-                    logger.debug("Loaded \(pose)")
+                    logger.debug("PerfectFormManager: loaded \(pose)")
                 } else {
-                    logger.error("Failed to load pose \(pose) into CVPixelBuffer")
+                    logger.error("PerfectFormManager: Failed to load pose \(pose) into CVPixelBuffer")
                 }
             } else {
-                logger.error("Failed to load pose \(pose) image")
+                logger.error("PerfectFormManager: Failed to load pose \(pose) image")
             }
         }
     }

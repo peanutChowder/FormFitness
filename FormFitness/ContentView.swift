@@ -139,7 +139,7 @@ struct ExerciseRow: View {
             RowButton(sysName: "play.circle.fill", iconSize: 44, color: .blue)
                 .onTapGesture {
                     showingLivePoseView = true
-                    logger.log("Play button clicked for: \(exercise.name)")
+                    logger.log("ExerciseRow: Play button clicked for: \(exercise.name)")
                 }
             
             Text(exercise.name)
@@ -149,7 +149,7 @@ struct ExerciseRow: View {
             
             RowButton(sysName: exercise.isFavorite ? "star.fill" : "star", iconSize: 20, color: .yellow)
                 .onTapGesture {
-                    logger.debug("Favorite button clicked for: \(exercise.name)")
+                    logger.debug("ExerciseRow: Favorite button clicked for: \(exercise.name)")
                     store.toggleFavorite(for: exercise)
                 }
             
@@ -158,7 +158,7 @@ struct ExerciseRow: View {
         .padding(.vertical, 8)
         .contentShape(Rectangle())
         .onTapGesture {
-            logger.debug("Exercise card clicked for: \(exercise.name)")
+            logger.debug("ExerciseRow: Exercise card clicked for: \(exercise.name)")
             showingExerciseOverview = true
             
         }

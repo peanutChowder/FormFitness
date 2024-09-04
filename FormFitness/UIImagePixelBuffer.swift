@@ -12,7 +12,7 @@ extension UIImage {
         let width = Int(self.size.width)
         let height = Int(self.size.height)
         
-        logger.debug("Attempting to create pixel buffer for image of size: \(width)x\(height)")
+        logger.debug("UIImage: Pixel buffer Starting for image \(width)x\(height)")
         
         let attrs = [kCVPixelBufferCGImageCompatibilityKey: kCFBooleanTrue,
                      kCVPixelBufferCGBitmapContextCompatibilityKey: kCFBooleanTrue] as CFDictionary
@@ -25,12 +25,12 @@ extension UIImage {
                                          &pixelBuffer)
         
         guard status == kCVReturnSuccess else {
-            logger.debug("Failed to create pixel buffer. Status: \(status)")
+            logger.debug("UIImage: Pixel buffer failed: \(status)")
             return nil
         }
 
         guard let unwrappedPixelBuffer = pixelBuffer else {
-            logger.debug("Pixel buffer is nil after creation")
+            logger.debug("UIImage: Pixel buffer failed: nil after creation")
             return nil
         }
 
@@ -45,7 +45,7 @@ extension UIImage {
                                       bytesPerRow: CVPixelBufferGetBytesPerRow(unwrappedPixelBuffer),
                                       space: rgbColorSpace,
                                       bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) else {
-            logger.debug("Failed to create CGContext")
+            logger.debug("UIImage: Failed to create CGContext")
             return nil
         }
 
@@ -57,7 +57,7 @@ extension UIImage {
         UIGraphicsPopContext()
         CVPixelBufferUnlockBaseAddress(unwrappedPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
 
-        logger.debug("Successfully created pixel buffer")
+        logger.debug("UIImage: Success creating Pixel Buffer")
         return unwrappedPixelBuffer
     }
 }

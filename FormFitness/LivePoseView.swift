@@ -59,11 +59,16 @@ struct LivePoseView: View {
             }
         }.onRotate { newOrientation in
             orientation = newOrientation
-            logger.debug("Screen rotated: \(orientation.rawValue)")
-        }
-        .onChange(of: selectedPose) { _, newPose in
-            cameraManager.changePerfectFormPose(to: newPose)
-        }
+            
+            if orientation == .landscapeRight {
+                isLandscapeRight = true
+                logger.debug("Orientation: Landscape right")
+
+            } else {
+                isLandscapeRight = false
+            }
+            logger.debug("Orientation: \(orientation.rawValue)")
+        })
         .onAppear {
             PerfectFormManager.shared.loadPerfectForms()
             self.availablePoses = Array(PerfectFormManager.shared.perfectForms.keys)
@@ -71,7 +76,7 @@ struct LivePoseView: View {
                 self.selectedPose = firstPose
             }
             
-            logger.debug("Loaded poses: \(availablePoses)")
+            logger.debug("LivePoseManager: poses loaded \(availablePoses)")
         }
     }
 }
