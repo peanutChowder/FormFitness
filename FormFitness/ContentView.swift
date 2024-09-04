@@ -131,14 +131,14 @@ struct RowButton: View {
 struct ExerciseRow: View {
     let exercise: Exercise
     @ObservedObject var store: ExerciseStore
-    @State private var showingPlayOverlay = false
+    @State private var showingLivePoseView = false
     @State private var showingExerciseOverview = false
     
     var body: some View {
         HStack(spacing: 12) {
             RowButton(sysName: "play.circle.fill", iconSize: 44, color: .blue)
                 .onTapGesture {
-                    showingPlayOverlay = true
+                    showingLivePoseView = true
                     logger.log("Play button clicked for: \(exercise.name)")
                 }
             
@@ -162,9 +162,8 @@ struct ExerciseRow: View {
             showingExerciseOverview = true
             
         }
-        .sheet(isPresented: $showingPlayOverlay) {
-            // TODO: add camera layout
-            Text("Exercise Play Overlay")
+        .fullScreenCover(isPresented: $showingLivePoseView) {
+            LivePoseView()
         }
         .sheet (isPresented: $showingExerciseOverview) {
             // TODO: add overview page & connect card tap to open page

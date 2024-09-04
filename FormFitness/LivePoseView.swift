@@ -34,8 +34,8 @@ struct LivePoseView: View {
     var isLandscapeRight: Bool {
         return orientation == .landscapeRight
     }
-    @State private var selectedPose = "warrior"
-    @State private var availablePoses: [String] = []
+    @State private var selectedPose = "downward-dog"
+    @State private var availablePoses: [String] = ["downward-dog"]
 
     
     var body: some View {
@@ -54,31 +54,12 @@ struct LivePoseView: View {
                     CameraView(session: cameraManager.session)
                         .edgesIgnoringSafeArea(.all)
                 }
-                
-                VStack {
-                    Spacer()
-                    if availablePoses.isEmpty {
-                        Text("No poses available")
-                            .foregroundColor(.red)
-                            .padding()
-                            .background(Color.white.opacity(0.7))
-                    } else {
-                        Picker("Select Pose", selection: $selectedPose) {
-                            ForEach(availablePoses, id: \.self) { pose in
-                                Text(pose.capitalized)
-                                    .foregroundColor(.black) 
-                            }
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .padding()
-                        .background(Color.white.opacity(0.7))
-                    }
-                }
             } else {
                 RotationPromptView()
             }
         }.onRotate { newOrientation in
             orientation = newOrientation
+            logger.debug("Screen rotated: \(orientation.rawValue)")
         }
         .onChange(of: selectedPose) { _, newPose in
             cameraManager.changePerfectFormPose(to: newPose)
@@ -90,7 +71,7 @@ struct LivePoseView: View {
                 self.selectedPose = firstPose
             }
             
-            logger.debug("Available poses: \(availablePoses)")
+            logger.debug("Loaded poses: \(availablePoses)")
         }
     }
 }
@@ -131,10 +112,3 @@ struct CameraView: UIViewRepresentable {
     
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {}
 }
-
-
-
-#Preview {
-    ContentView()
-}
-
