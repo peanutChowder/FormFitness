@@ -21,19 +21,12 @@ struct DeviceRotationViewModifier: ViewModifier {
     }
 }
 
-extension View {
-    func onRotate(perform action: @escaping (UIDeviceOrientation) -> Void) -> some View {
-        self.modifier(DeviceRotationViewModifier(action: action))
-    }
-}
 
 struct LivePoseView: View {
     @StateObject private var cameraManager = CameraManager()
     @State private var orientation = UIDeviceOrientation.unknown
     
-    var isLandscapeRight: Bool {
-        return orientation == .landscapeRight
-    }
+    @State private var isLandscapeRight = false
     @State private var selectedPose = "downward-dog"
     @State private var availablePoses: [String] = ["downward-dog"]
 
@@ -57,7 +50,8 @@ struct LivePoseView: View {
             } else {
                 RotationPromptView()
             }
-        }.onRotate { newOrientation in
+        }
+        .modifier(DeviceRotationViewModifier { newOrientation in
             orientation = newOrientation
             
             if orientation == .landscapeRight {
