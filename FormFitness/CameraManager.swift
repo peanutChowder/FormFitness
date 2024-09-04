@@ -21,7 +21,7 @@ class CameraManager: NSObject, ObservableObject {
         session.beginConfiguration()
         
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
-            setupError = "Failed to get front camera device"
+            logger.error("Failed to get front camera device")
             return
         }
         
@@ -30,7 +30,7 @@ class CameraManager: NSObject, ObservableObject {
             if session.canAddInput(input) {
                 session.addInput(input)
             } else {
-                setupError = "Failed to add camera input to session"
+                logger.error("Failed to add camera input to session")
                 return
             }
             
@@ -39,11 +39,11 @@ class CameraManager: NSObject, ObservableObject {
             if session.canAddOutput(output) {
                 session.addOutput(output)
             } else {
-                setupError = "Failed to add video output to session"
+                logger.error("Failed to add video output to session")
                 return
             }
         } catch {
-            setupError = "Failed to create camera input: \(error.localizedDescription)"
+            logger.error("Failed to create camera input: \(error.localizedDescription)")
             return
         }
         
