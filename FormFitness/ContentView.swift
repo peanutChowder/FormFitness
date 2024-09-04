@@ -156,6 +156,12 @@ struct ExerciseRow: View {
             RowIcon(imageName: exercise.imageName, imageSize: 34, circleSize: 40, color: Color.white)
         }
         .padding(.vertical, 8)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            logger.debug("Exercise card clicked for: \(exercise.name)")
+            showingExerciseOverview = true
+            
+        }
         .sheet(isPresented: $showingPlayOverlay) {
             // TODO: add camera layout
             Text("Exercise Play Overlay")
