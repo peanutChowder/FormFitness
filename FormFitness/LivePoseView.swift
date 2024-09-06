@@ -32,36 +32,28 @@ struct LivePoseView: View {
 
     
     var body: some View {
-        ZStack {
-            if let error = cameraManager.setupError {
-                Text("Camera Error: \(error)")
-                    .foregroundColor(.black)
-                    .padding()
-            } else if isLandscapeRight {
-                if let currentFrame = cameraManager.currentFrame {
-                    Image(uiImage: currentFrame)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .edgesIgnoringSafeArea(.all)
+        GeometryReader { geometry in
+            ZStack {
+                if isLandscapeRight {
+                    if let currentFrame = cameraManager.currentFrame {
+                        Image(uiImage: currentFrame)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                    } else {
+                        CameraView(session: cameraManager.session)
+                            .edgesIgnoringSafeArea(.all)
+                    }
                 } else {
-                    CameraView(session: cameraManager.session)
-                        .edgesIgnoringSafeArea(.all)
+                    RotationPromptView()
                 }
-            } else {
-                RotationPromptView()
             }
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .modifier(DeviceRotationViewModifier { newOrientation in
             orientation = newOrientation
-            
-            if orientation == .landscapeRight {
-                isLandscapeRight = true
-                logger.debug("Orientation: Landscape right")
-
-            } else {
-                isLandscapeRight = false
-            }
-            logger.debug("Orientation: \(orientation.rawValue)")
+            isLandscapeRight = (newOrientation == .landscapeRight)
+            logger.debug("Orientation changed: \(newOrientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
         })
         .onAppear {
             PerfectFormManager.shared.loadPerfectForms()
@@ -69,8 +61,11 @@ struct LivePoseView: View {
             if let firstPose = availablePoses.first {
                 self.selectedPose = firstPose
             }
-            
             logger.debug("LivePoseManager: poses loaded \(availablePoses)")
+            
+            // Check initial orientation
+            isLandscapeRight = (UIDevice.current.orientation == .landscapeRight)
+            logger.debug("Initial orientation: \(UIDevice.current.orientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
         }
     }
 }
