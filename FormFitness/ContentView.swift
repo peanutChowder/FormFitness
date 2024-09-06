@@ -11,6 +11,7 @@ struct Exercise: Identifiable {
     let id = UUID()
     let name: String
     let imageName: String
+    var iconName: String? = ""
     var isFavorite: Bool = false
 }
 
@@ -18,7 +19,7 @@ class ExerciseStore: ObservableObject {
     @Published var exercises: [Exercise] = [
         Exercise(name: "Push-ups", imageName: "pushups"),
         Exercise(name: "Squats", imageName: "squats"),
-        Exercise(name: "", imageName: "lunges"),
+        Exercise(name: "Downwawrd Dog", imageName: "downward-dog", iconName: "downward-dog-icon"),
     ]
     
     var favoriteExercises: [Exercise] {
@@ -105,11 +106,13 @@ struct RowIcon: View {
                 .fill(Color.white)
                 .frame(width: circleSize, height: circleSize)
             
-            Image(imageName)
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(color)
-                .frame(width: imageSize, height: imageSize)
+            if !imageName.isEmpty {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(color)
+                    .frame(width: imageSize, height: imageSize)
+            }
         }
     }
 }
@@ -153,7 +156,7 @@ struct ExerciseRow: View {
                     store.toggleFavorite(for: exercise)
                 }
             
-            RowIcon(imageName: exercise.imageName, imageSize: 34, circleSize: 40, color: Color.white)
+            RowIcon(imageName: exercise.iconName ?? "", imageSize: 34, circleSize: 40, color: Color.white)
         }
         .padding(.vertical, 8)
         .contentShape(Rectangle())
