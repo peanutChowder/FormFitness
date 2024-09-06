@@ -23,13 +23,10 @@ struct DeviceRotationViewModifier: ViewModifier {
 
 
 struct LivePoseView: View {
+    var exerciseImg: String
     @StateObject private var cameraManager = CameraManager()
     @State private var orientation = UIDeviceOrientation.unknown
-    
     @State private var isLandscapeRight = false
-    @State private var selectedPose = "downward-dog"
-    @State private var availablePoses: [String] = ["downward-dog"]
-
     
     var body: some View {
         GeometryReader { geometry in
@@ -56,12 +53,7 @@ struct LivePoseView: View {
             logger.debug("Orientation changed: \(newOrientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
         })
         .onAppear {
-            PerfectFormManager.shared.loadPerfectForms()
-            self.availablePoses = Array(PerfectFormManager.shared.perfectForms.keys)
-            if let firstPose = availablePoses.first {
-                self.selectedPose = firstPose
-            }
-            logger.debug("LivePoseManager: poses loaded \(availablePoses)")
+            PerfectFormManager.shared.loadStaticForm(exerciseImg: exerciseImg)
             
             // Check initial orientation
             isLandscapeRight = (UIDevice.current.orientation == .landscapeRight)

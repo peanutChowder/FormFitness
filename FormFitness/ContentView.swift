@@ -166,7 +166,7 @@ struct ExerciseRow: View {
             
         }
         .fullScreenCover(isPresented: $showingLivePoseView) {
-            LivePoseView()
+            LivePoseView(exerciseImg: exercise.imageName)
         }
         .sheet (isPresented: $showingExerciseOverview) {
             // TODO: add overview page & connect card tap to open page
