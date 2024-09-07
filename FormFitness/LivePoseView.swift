@@ -54,6 +54,7 @@ struct LivePoseView: View {
         })
         .onAppear {
             PerfectFormManager.shared.loadStaticForm(exerciseImg: exerciseImg)
+            cameraManager.changePerfectFormPose(to: exerciseImg)
             
             // Check initial orientation
             isLandscapeRight = (UIDevice.current.orientation == .landscapeRight)

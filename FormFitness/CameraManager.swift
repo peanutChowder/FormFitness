@@ -10,7 +10,7 @@ class CameraManager: NSObject, ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     private let poseDetector = PoseDetector()
-    private var currentPerfectFormPose: String = "downward-dog"
+    private var currentPose: String = "downward-dog"
     
     override init() {
         super.init()
@@ -55,7 +55,7 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     func changePerfectFormPose(to pose: String) {
-           currentPerfectFormPose = pose
+           currentPose = pose
        }
    }
 
@@ -64,7 +64,7 @@ class CameraManager: NSObject, ObservableObject {
            guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
            
            if let pose = poseDetector.detectPose(in: pixelBuffer),
-              let perfectFormPose = PerfectFormManager.shared.perfectForms[currentPerfectFormPose]?.pose,
+              let perfectFormPose = PerfectFormManager.shared.perfectForms[currentPose]?.pose,
               let poseImage = poseDetector.drawPoseOverlay(pose: pose, on: pixelBuffer, perfectFormPose: perfectFormPose) {
                DispatchQueue.main.async {
                    self.currentFrame = poseImage

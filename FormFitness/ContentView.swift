@@ -20,6 +20,7 @@ class ExerciseStore: ObservableObject {
         Exercise(name: "Push-ups", imageName: "pushups"),
         Exercise(name: "Squats", imageName: "squats"),
         Exercise(name: "Downwawrd Dog", imageName: "downward-dog", iconName: "downward-dog-icon"),
+        Exercise(name: "Plank", imageName: "plank3")
     ]
     
     var favoriteExercises: [Exercise] {
