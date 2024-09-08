@@ -8,6 +8,7 @@ class CameraManager: NSObject, ObservableObject {
     @Published var setupError: String?
     @Published var currentFrame: UIImage?
     
+    private(set) var poseImg: String = ""
     private var cancellables = Set<AnyCancellable>()
     private let poseDetector = PoseDetector()
     private var currentPose: String = "downward-dog"

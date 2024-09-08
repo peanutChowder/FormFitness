@@ -23,10 +23,15 @@ struct DeviceRotationViewModifier: ViewModifier {
 
 
 struct LivePoseView: View {
-    var exerciseImg: String
-    @StateObject private var cameraManager = CameraManager()
+    let exerciseImg: String
+    private var cameraManager: CameraManager = CameraManager()
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var isLandscapeRight = false
+    
+    init(exerciseImg: String) {
+        self.exerciseImg = exerciseImg
+        cameraManager.setPoseImg(to: exerciseImg)
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -47,6 +52,7 @@ struct LivePoseView: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
+        // TODO: is this branch redundant?
         .modifier(DeviceRotationViewModifier { newOrientation in
             orientation = newOrientation
             isLandscapeRight = (newOrientation == .landscapeRight)
