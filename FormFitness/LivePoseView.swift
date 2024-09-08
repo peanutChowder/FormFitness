@@ -11,7 +11,7 @@ import Vision
 
 struct DeviceRotationViewModifier: ViewModifier {
     let action: (UIDeviceOrientation) -> Void
-
+    
     func body(content: Content) -> some View {
         content
             .onAppear()
@@ -24,6 +24,7 @@ struct DeviceRotationViewModifier: ViewModifier {
 
 struct LivePoseView: View {
     var exerciseImg: String
+    @Environment(\.presentationMode) var presentationMode
     @StateObject private var cameraManager = CameraManager()
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var isLandscapeRight = false
@@ -31,6 +32,7 @@ struct LivePoseView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                // Pose overlay & rotation screen
                 if isLandscapeRight {
                     if let currentFrame = cameraManager.currentFrame {
                         Image(uiImage: currentFrame)
@@ -43,6 +45,25 @@ struct LivePoseView: View {
                     }
                 } else {
                     RotationPromptView()
+                }
+                
+                // Back button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Button(action: {
+                            presentationMode.wrappedValue.dismiss()
+                        }) {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(Color.black.opacity(0.5))
+                                .clipShape(Circle())
+                        }
+                        .padding(.leading, 20)
+                        .padding(.bottom, geometry.safeAreaInsets.bottom + 20)
+                        Spacer()
+                    }
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
@@ -80,7 +101,7 @@ struct RotationPromptView: View {
 struct CameraView: UIViewRepresentable {
     class VideoPreviewView: UIView {
         override class var layerClass: AnyClass {
-             AVCaptureVideoPreviewLayer.self
+            AVCaptureVideoPreviewLayer.self
         }
         
         var videoPreviewLayer: AVCaptureVideoPreviewLayer {
