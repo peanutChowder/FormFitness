@@ -71,7 +71,7 @@ struct LivePoseView: View {
         .modifier(DeviceRotationViewModifier { newOrientation in
             orientation = newOrientation
             isLandscapeRight = (newOrientation == .landscapeRight)
-            logger.debug("Orientation changed: \(newOrientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
+            logger.debug("LivePoseView: Orientation changed: \(newOrientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
         })
         .onAppear {
             PerfectFormManager.shared.loadStaticForm(exerciseImg: exerciseImg)
@@ -79,7 +79,7 @@ struct LivePoseView: View {
             
             // Check initial orientation
             isLandscapeRight = (UIDevice.current.orientation == .landscapeRight)
-            logger.debug("Initial orientation: \(UIDevice.current.orientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
+            logger.debug("LivePoseView: Initial orientation: \(UIDevice.current.orientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
         }
     }
 }

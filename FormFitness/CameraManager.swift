@@ -21,7 +21,7 @@ class CameraManager: NSObject, ObservableObject {
         session.beginConfiguration()
         
         guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front) else {
-            logger.error("Failed to get front camera device")
+            logger.error("CameraManager: Failed to get front camera device")
             return
         }
         
@@ -30,7 +30,7 @@ class CameraManager: NSObject, ObservableObject {
             if session.canAddInput(input) {
                 session.addInput(input)
             } else {
-                logger.error("Failed to add camera input to session")
+                logger.error("CameraManager: Failed to add camera input to session")
                 return
             }
             
@@ -43,15 +43,15 @@ class CameraManager: NSObject, ObservableObject {
                     if connection.isVideoMirroringSupported {
                         connection.isVideoMirrored = true
                     } else {
-                        logger.error("video mirroring not supported")
+                        logger.error("CameraManager: video mirroring not supported")
                     }
                 }
             } else {
-                logger.error("Failed to add video output to session")
+                logger.error("CameraManager: Failed to add video output to session")
                 return
             }
         } catch {
-            logger.error("Failed to create camera input: \(error.localizedDescription)")
+            logger.error("CameraManager: Failed to create camera input: \(error.localizedDescription)")
             return
         }
         
