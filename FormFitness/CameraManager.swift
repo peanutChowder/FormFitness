@@ -38,6 +38,14 @@ class CameraManager: NSObject, ObservableObject {
             output.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
             if session.canAddOutput(output) {
                 session.addOutput(output)
+                
+                if let connection = output.connection(with: .video) {
+                    if connection.isVideoMirroringSupported {
+                        connection.isVideoMirrored = true
+                    } else {
+                        logger.error("video mirroring not supported")
+                    }
+                }
             } else {
                 logger.error("Failed to add video output to session")
                 return
