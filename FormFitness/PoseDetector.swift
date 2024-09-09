@@ -9,9 +9,9 @@ import UIKit
 import Vision
 
 class PoseDetector {
-    func detectPose(in pixelBuffer: CVPixelBuffer) -> VNHumanBodyPoseObservation? {
+    func detectPose(in pixelBuffer: CVPixelBuffer, orientation: CGImagePropertyOrientation = .up) -> VNHumanBodyPoseObservation? {
         let request = VNDetectHumanBodyPoseRequest()
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: orientation, options: [:])
         
         do {
             try handler.perform([request])

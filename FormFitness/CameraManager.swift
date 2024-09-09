@@ -45,6 +45,8 @@ class CameraManager: NSObject, ObservableObject {
                     } else {
                         logger.error("CameraManager: video mirroring not supported")
                     }
+                    
+                    connection.videoRotationAngle = phoneOrientationToVideoAngle()
                 }
             } else {
                 logger.error("CameraManager: Failed to add video output to session")
@@ -60,6 +62,22 @@ class CameraManager: NSObject, ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             self?.session.startRunning()
         }
+    }
+    
+    func phoneOrientationToVideoAngle() -> CGFloat {
+        let phoneOrientation = UIDevice.current.orientation
+        
+        switch phoneOrientation {
+        case .portrait:
+            return 90
+        case .landscapeLeft:
+            return 180
+        case .landscapeRight:
+            return 0
+        @unknown default:
+            return 0
+        }
+        
     }
     
     func changePerfectFormPose(to pose: String) {
