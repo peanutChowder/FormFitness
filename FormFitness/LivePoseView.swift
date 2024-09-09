@@ -27,13 +27,15 @@ struct LivePoseView: View {
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var cameraManager = CameraManager()
     @State private var orientation = UIDeviceOrientation.unknown
-    @State private var isLandscapeRight = false
+    @State private var showRotationPromptView = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 // Pose overlay & rotation screen
-                if isLandscapeRight {
+                if showRotationPromptView {
+                    RotationPromptView()
+                } else {
                     if let currentFrame = cameraManager.currentFrame {
                         Image(uiImage: currentFrame)
                             .resizable()
@@ -43,8 +45,6 @@ struct LivePoseView: View {
                         CameraView(session: cameraManager.session)
                             .edgesIgnoringSafeArea(.all)
                     }
-                } else {
-                    RotationPromptView()
                 }
                 
                 // Back button
@@ -70,16 +70,17 @@ struct LivePoseView: View {
         }
         .modifier(DeviceRotationViewModifier { newOrientation in
             orientation = newOrientation
-            isLandscapeRight = (newOrientation == .landscapeRight)
-            logger.debug("LivePoseView: Orientation changed: \(newOrientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
+            showRotationPromptView = switch newOrientation {
+                case .portrait, .landscapeLeft, .landscapeRight:
+                    false
+                default:
+                    true
+            }
+            logger.debug("LivePoseView: Orientation changed: \(newOrientation.rawValue), showRotationPromptView: \(showRotationPromptView)")
         })
         .onAppear {
             PerfectFormManager.shared.loadStaticForm(exerciseImg: exerciseImg)
             cameraManager.changePerfectFormPose(to: exerciseImg)
-            
-            // Check initial orientation
-            isLandscapeRight = (UIDevice.current.orientation == .landscapeRight)
-            logger.debug("LivePoseView: Initial orientation: \(UIDevice.current.orientation.rawValue), isLandscapeRight: \(isLandscapeRight)")
         }
     }
 }
@@ -87,10 +88,10 @@ struct LivePoseView: View {
 struct RotationPromptView: View {
     var body: some View {
         VStack {
-            Image(systemName: "rotate.right")
+            Image(systemName: "rotate.3d")
                 .font(.system(size: 50))
                 .padding()
-            Text("Please rotate your device so that the camera is on the right.")
+            Text("Prop your phone up in portrait or landscape")
                 .font(.headline)
                 .multilineTextAlignment(.center)
                 .padding()
