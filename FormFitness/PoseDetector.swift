@@ -36,13 +36,13 @@ class PoseDetector {
         // Draw live pose lines
         context.setStrokeColor(UIColor.green.cgColor)
         context.setLineWidth(3.0)
-        drawPoseLines(pose: pose, on: context, size: imageSize)
+        drawPoseOverlay(pose: pose, on: context, imageSize: imageSize)
         
         // Draw perfect form pose lines
         if let perfectFormPose = perfectFormPose {
             context.setStrokeColor(UIColor.blue.cgColor)
-            context.setLineWidth(2.0)
-            drawPoseLines(pose: perfectFormPose, on: context, size: imageSize)
+            context.setLineWidth(10.0)
+            drawPoseOverlay(pose: perfectFormPose, on: context, imageSize: imageSize)
         }
         
         let result = UIGraphicsGetImageFromCurrentImageContext()
@@ -50,7 +50,7 @@ class PoseDetector {
         return result
     }
     
-    private func drawPoseLines(pose: VNHumanBodyPoseObservation, on context: CGContext, size: CGSize) {
+    private func drawPoseOverlay(pose: VNHumanBodyPoseObservation, on context: CGContext, imageSize: CGSize) {
         let connections: [(VNHumanBodyPoseObservation.JointName, VNHumanBodyPoseObservation.JointName)] = [
             (.nose, .neck),
             (.neck, .leftShoulder),
@@ -68,9 +68,39 @@ class PoseDetector {
             (.rightKnee, .rightAnkle)
         ]
         
+        // Draw pose lines
         for (start, end) in connections {
-            drawLine(from: start, to: end, in: pose, on: context, size: size)
+            drawLine(from: start, to: end, in: pose, on: context, size: imageSize)
         }
+        
+        // Draw pose circle indicators for head, hands, and feet
+        let headColor = CGColor(red: 3/255, green: 240/255, blue: 252/255, alpha: 1)
+        let handColor = CGColor(red: 3/255, green: 180/255, blue: 252/255, alpha: 1)
+        let feetColor = CGColor(red: 3/255, green: 140/255, blue: 252/255, alpha: 1)
+        drawJointIndicator(for: .nose, in: pose, on: context, size: imageSize, jointIndicatorRadius: 40, color: headColor)
+        drawJointIndicator(for: .rightWrist, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: handColor)
+        drawJointIndicator(for: .leftWrist, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: handColor)
+        drawJointIndicator(for: .leftAnkle, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: feetColor)
+        drawJointIndicator(for: .rightAnkle, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: feetColor)
+    }
+    
+    private func drawJointIndicator(for joint: VNHumanBodyPoseObservation.JointName,
+                                    in pose: VNHumanBodyPoseObservation,
+                                    on context: CGContext,
+                                    size: CGSize,
+                                    jointIndicatorRadius: CGFloat,
+                                    color: CGColor) {
+        guard let point = try? pose.recognizedPoint(joint),
+              point.confidence > 0.1 else {
+            return
+        }
+        
+        let x = point.location.x * size.width
+        let y = (1 - point.location.y) * size.height
+        
+        context.setFillColor(color)
+        context.addArc(center: CGPoint(x: x, y: y), radius: jointIndicatorRadius, startAngle: 0, endAngle: CGFloat.pi * 2, clockwise: true)
+        context.fillPath()
     }
     
     private func drawLine(from startPoint: VNHumanBodyPoseObservation.JointName,
