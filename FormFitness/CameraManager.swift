@@ -6,7 +6,7 @@ import UIKit
 class CameraManager: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
     @Published var setupError: String?
-    @Published var currentFrame: UIImage?
+    @Published var livePoseFrame: UIImage?
     
     private var cancellables = Set<AnyCancellable>()
     private let poseDetector = PoseDetector()
@@ -89,11 +89,23 @@ class CameraManager: NSObject, ObservableObject {
        func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
            guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
            
-           if let pose = poseDetector.detectPose(in: pixelBuffer),
-              let perfectFormPose = PerfectFormManager.shared.perfectForms[currentPose]?.pose,
-              let poseImage = poseDetector.drawPoseOverlay(pose: pose, on: pixelBuffer, perfectFormPose: perfectFormPose) {
+           if let pose = poseDetector.detectPose(in: pixelBuffer) {
+               let imageSize = CGSize(width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
+               
+               UIGraphicsBeginImageContextWithOptions(imageSize, false, 1.0)
+               guard let context = UIGraphicsGetCurrentContext() else { return }
+               
+               // Draw the original image
+               let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+               let uiImage = UIImage(ciImage: ciImage)
+               uiImage.draw(in: CGRect(origin: .zero, size: imageSize))
+               
+               poseDetector.drawLivePose(pose: pose, context: context, imageSize: imageSize)
+               let result = UIGraphicsGetImageFromCurrentImageContext()
+               UIGraphicsEndImageContext()
+               
                DispatchQueue.main.async {
-                   self.currentFrame = poseImage
+                   self.livePoseFrame = result
                }
            }
        }

@@ -36,14 +36,16 @@ struct LivePoseView: View {
                 if showRotationPromptView {
                     RotationPromptView()
                 } else {
-                    if let currentFrame = cameraManager.currentFrame {
-                        Image(uiImage: currentFrame)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .edgesIgnoringSafeArea(.all)
-                    } else {
-                        CameraView(session: cameraManager.session)
-                            .edgesIgnoringSafeArea(.all)
+                    ZStack {
+                        if let currentFrame = cameraManager.livePoseFrame {
+                            Image(uiImage: currentFrame)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .edgesIgnoringSafeArea(.all)
+                        } else {
+                            CameraView(session: cameraManager.session)
+                                .edgesIgnoringSafeArea(.all)
+                        }
                     }
                 }
                 

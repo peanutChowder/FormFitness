@@ -22,7 +22,22 @@ class PoseDetector {
         }
     }
     
-    func drawPoseOverlay(pose: VNHumanBodyPoseObservation, on image: CVPixelBuffer, perfectFormPose: VNHumanBodyPoseObservation? = nil) -> UIImage? {
+    func drawStaticPose(context: CGContext, perfectFormPose: VNHumanBodyPoseObservation? = nil, imageSize: CGSize) {
+        // Draw perfect form pose lines
+        if let perfectFormPose = perfectFormPose {
+            context.setStrokeColor(UIColor.blue.cgColor)
+            context.setLineWidth(10.0)
+            drawPoseOverlay(pose: perfectFormPose, on: context, imageSize: imageSize)
+        }
+    }
+    
+    func drawLivePose(pose: VNHumanBodyPoseObservation, context: CGContext, imageSize: CGSize) {
+        context.setStrokeColor(UIColor.green.cgColor)
+        context.setLineWidth(3.0)
+        drawPoseOverlay(pose: pose, on: context, imageSize: imageSize)
+    }
+    
+    func drawPoseFrame(pose: VNHumanBodyPoseObservation, on image: CVPixelBuffer, perfectFormPose: VNHumanBodyPoseObservation? = nil) -> UIImage? {
         let imageSize = CGSize(width: CVPixelBufferGetWidth(image), height: CVPixelBufferGetHeight(image))
         
         UIGraphicsBeginImageContextWithOptions(imageSize, false, 1.0)
