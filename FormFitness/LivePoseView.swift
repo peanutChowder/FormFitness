@@ -37,13 +37,19 @@ struct LivePoseView: View {
                     RotationPromptView()
                 } else {
                     ZStack {
-                        if let currentFrame = cameraManager.livePoseFrame {
+                        if let currentFrame = cameraManager.liveTrackingFrame {
                             Image(uiImage: currentFrame)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all)
                         } else {
                             CameraView(session: cameraManager.session)
+                                .edgesIgnoringSafeArea(.all)
+                        }
+                        if let staticPose = cameraManager.staticPose {
+                            Image(uiImage: staticPose)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all)
                         }
                     }
@@ -73,10 +79,10 @@ struct LivePoseView: View {
         .modifier(DeviceRotationViewModifier { newOrientation in
             orientation = newOrientation
             showRotationPromptView = switch newOrientation {
-                case .portrait, .landscapeLeft, .landscapeRight:
-                    false
-                default:
-                    true
+            case .portrait, .landscapeLeft, .landscapeRight:
+                false
+            default:
+                true
             }
             logger.debug("LivePoseView: Orientation changed: \(newOrientation.rawValue), showRotationPromptView: \(showRotationPromptView)")
         })
