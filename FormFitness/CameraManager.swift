@@ -126,33 +126,30 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
+        let currPixelBufferSize = CGSize(width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
+        
+        if currPixelBufferSize != self.pixelBufferSize {
+            self.pixelBufferSize = currPixelBufferSize
+            refreshCurrentPose()
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(currPixelBufferSize, false, 1.0)
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+                        
+        // Draw the original image
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let uiImage = UIImage(ciImage: ciImage)
+        
+        uiImage.draw(in: CGRect(origin: .zero, size: currPixelBufferSize))
+        
         if let pose = poseDetector.detectPose(in: pixelBuffer) {
-            let currPixelBufferSize = CGSize(width: CVPixelBufferGetWidth(pixelBuffer), height: CVPixelBufferGetHeight(pixelBuffer))
-            
-            if currPixelBufferSize != self.pixelBufferSize {
-                self.pixelBufferSize = currPixelBufferSize
-                refreshCurrentPose()
-            }
-            
-            UIGraphicsBeginImageContextWithOptions(currPixelBufferSize, false, 1.0)
-            guard let context = UIGraphicsGetCurrentContext() else { return }
-            
-            // Draw the original image
-            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-            let uiImage = UIImage(ciImage: ciImage)
-            uiImage.draw(in: CGRect(origin: .zero, size: currPixelBufferSize))
-            
             poseDetector.drawLivePose(pose: pose, context: context, imageSize: currPixelBufferSize)
-            let result = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            
-            DispatchQueue.main.async {
-                self.liveTrackingFrame = result
-            }
-        } else {
-            DispatchQueue.main.async {
-                self.liveTrackingFrame = nil
-            }
+        }
+        let result = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        DispatchQueue.main.async {
+            self.liveTrackingFrame = result
         }
     }
 }
