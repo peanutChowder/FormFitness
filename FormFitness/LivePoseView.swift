@@ -29,68 +29,19 @@ struct LivePoseView: View {
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var showRotationPromptView = false
     
+    @State private var isStaticPoseLocked = true
     @State private var poseOverlayOffset: CGSize = .zero
     @State private var poseOverlayScale: CGFloat = 1.0
+    
     
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Pose overlay & rotation screen
-                if showRotationPromptView {
-                    RotationPromptView()
-                } else {
-                    ZStack {
-                        if let currentFrame = cameraManager.liveTrackingFrame {
-                            Image(uiImage: currentFrame)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .edgesIgnoringSafeArea(.all)
-                        } else {
-                            CameraView(session: cameraManager.session)
-                                .edgesIgnoringSafeArea(.all)
-                        }
-                        if let staticPose = cameraManager.staticPose {
-                            Image(uiImage: staticPose)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .edgesIgnoringSafeArea(.all)
-                                .offset(poseOverlayOffset)
-                                .scaleEffect(poseOverlayScale)
-                                .gesture(
-                                    DragGesture()
-                                        .onChanged { value in
-                                            poseOverlayOffset = value.translation
-                                        }
-                                )
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            poseOverlayScale = value
-                                        }
-                                )
-                        }
-                    }
-                }
+                cameraView()
                 
-                // Back button
-                VStack {
-                    Spacer()
-                    HStack {
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Image(systemName: "xmark")
-                                .foregroundColor(.white)
-                                .padding()
-                                .background(Color.black.opacity(0.5))
-                                .clipShape(Circle())
-                        }
-                        .padding(.leading, 20)
-                        .padding(.bottom, geometry.safeAreaInsets.bottom + 20)
-                        Spacer()
-                    }
-                }
+                backButton(geometry: geometry)
+                
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
@@ -107,6 +58,67 @@ struct LivePoseView: View {
         .onAppear {
             PerfectFormManager.shared.loadStaticForm(exerciseImg: exerciseImg)
             cameraManager.changePerfectFormPose(to: exerciseImg)
+        }
+    }
+    
+    private func cameraView() -> some View {
+        ZStack {
+            // Pose overlay & rotation screen
+            if showRotationPromptView {
+                RotationPromptView()
+            } else {
+                ZStack {
+                    if let currentFrame = cameraManager.liveTrackingFrame {
+                        Image(uiImage: currentFrame)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                    } else {
+                        CameraView(session: cameraManager.session)
+                            .edgesIgnoringSafeArea(.all)
+                    }
+                    if let staticPose = cameraManager.staticPose {
+                        Image(uiImage: staticPose)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                            .offset(poseOverlayOffset)
+                            .scaleEffect(poseOverlayScale)
+                            .gesture(
+                                DragGesture()
+                                    .onChanged { value in
+                                        poseOverlayOffset = value.translation
+                                    }
+                            )
+                            .gesture(
+                                MagnificationGesture()
+                                    .onChanged { value in
+                                        poseOverlayScale = value
+                                    }
+                            )
+                    }
+                }
+            }
+        }
+    }
+    
+    private func backButton(geometry: GeometryProxy) -> some View {
+        VStack {
+            Spacer()
+            HStack {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.black.opacity(0.5))
+                        .clipShape(Circle())
+                }
+                .padding(.leading, 20)
+                .padding(.bottom, geometry.safeAreaInsets.bottom + 20)
+                Spacer()
+            }
         }
     }
 }
