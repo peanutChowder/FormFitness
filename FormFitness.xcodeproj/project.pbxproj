@@ -21,6 +21,7 @@
 		7309FBF22C86614E006C4B0F /* StaticMovements.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */; };
 		7309FBF42C86C38C006C4B0F /* LivePoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBF32C86C38C006C4B0F /* LivePoseView.swift */; };
 		7309FBF62C86C74B006C4B0F /* ExerciseIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */; };
+		73614B9B2C96539E0060DB15 /* SlidingMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73614B9A2C96539E0060DB15 /* SlidingMenu.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = StaticMovements.xcassets; sourceTree = "<group>"; };
 		7309FBF32C86C38C006C4B0F /* LivePoseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePoseView.swift; sourceTree = "<group>"; };
 		7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ExerciseIcons.xcassets; sourceTree = "<group>"; };
+		73614B9A2C96539E0060DB15 /* SlidingMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingMenu.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,16 +110,13 @@
 		7309FBB92C8445A8006C4B0F /* FormFitness */ = {
 			isa = PBXGroup;
 			children = (
-				7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */,
-				7309FBE62C8462CB006C4B0F /* CameraManager.swift */,
+				73614B9D2C9654C10060DB15 /* Camera */,
+				73614B9C2C96542D0060DB15 /* UI */,
 				7309FBBA2C8445A8006C4B0F /* FormFitnessApp.swift */,
-				7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */,
-				7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */,
 				7309FBBC2C8445A8006C4B0F /* ContentView.swift */,
-				7309FBF32C86C38C006C4B0F /* LivePoseView.swift */,
-				7309FBE92C84E47B006C4B0F /* PoseDetector.swift */,
 				7309FBBE2C8445AA006C4B0F /* Assets.xcassets */,
 				7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */,
+				7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */,
 				7309FBC02C8445AA006C4B0F /* Preview Content */,
 			);
 			path = FormFitness;
@@ -146,6 +145,26 @@
 				7309FBD72C8445AA006C4B0F /* FormFitnessUITestsLaunchTests.swift */,
 			);
 			path = FormFitnessUITests;
+			sourceTree = "<group>";
+		};
+		73614B9C2C96542D0060DB15 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				73614B9A2C96539E0060DB15 /* SlidingMenu.swift */,
+				7309FBF32C86C38C006C4B0F /* LivePoseView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		73614B9D2C9654C10060DB15 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				7309FBE62C8462CB006C4B0F /* CameraManager.swift */,
+				7309FBEB2C86578E006C4B0F /* PerfectFormManager.swift */,
+				7309FBED2C865902006C4B0F /* UIImagePixelBuffer.swift */,
+				7309FBE92C84E47B006C4B0F /* PoseDetector.swift */,
+			);
+			path = Camera;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -283,6 +302,7 @@
 				7309FBBD2C8445A8006C4B0F /* ContentView.swift in Sources */,
 				7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */,
 				7309FBEC2C86578E006C4B0F /* PerfectFormManager.swift in Sources */,
+				73614B9B2C96539E0060DB15 /* SlidingMenu.swift in Sources */,
 				7309FBF42C86C38C006C4B0F /* LivePoseView.swift in Sources */,
 				7309FBEA2C84E47B006C4B0F /* PoseDetector.swift in Sources */,
 				7309FBEE2C865902006C4B0F /* UIImagePixelBuffer.swift in Sources */,

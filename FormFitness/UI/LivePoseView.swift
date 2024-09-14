@@ -39,13 +39,7 @@ struct LivePoseView: View {
         GeometryReader { geometry in
             ZStack {
                 cameraView()
-                Group {
-                    if orientation.isPortrait {
-                        bottomSlidingMenu
-                    } else if orientation.isLandscape {
-                        sideSlidingMenu
-                    }
-                }
+                SlidingMenu(isExpanded: $isMenuExpanded, orientation: orientation)
 //                backButton(geometry: geometry) TODO: incorporate this into new menu
                 
             }
@@ -126,123 +120,6 @@ struct LivePoseView: View {
                 .padding(.bottom, geometry.safeAreaInsets.bottom + 20)
                 Spacer()
             }
-        }
-    }
-    
-    private var bottomSlidingMenu: some View {
-        GeometryReader { geometry in
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    ZStack {
-                        if isMenuExpanded {
-                            expandedMenu(isPortrait: true)
-                        } else {
-                            collapsedMenu(isPortrait: true)
-                        }
-                    }
-                    .frame(height: isMenuExpanded ? 100 : 80)
-                    .frame(width: geometry.size.width * 0.8)
-                    .background(isMenuExpanded ? Color.black.opacity(0.5) : nil)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .offset(y: isMenuExpanded ? -40 : 0)
-                    Spacer()
-                }
-            }
-            .edgesIgnoringSafeArea(.bottom)
-        }
-    }
-    
-    private var sideSlidingMenu: some View {
-        GeometryReader { geometry in
-            HStack {
-                Spacer()
-                VStack {
-                    Spacer()
-                    ZStack {
-                        if isMenuExpanded {
-                            expandedMenu(isPortrait: false)
-                        } else {
-                            collapsedMenu(isPortrait: false)
-                        }
-                    }
-                    .frame(width: isMenuExpanded ? 100 : 80)
-                    .frame(height: geometry.size.height * 0.8)
-                    .background(isMenuExpanded ? Color.black.opacity(0.5) : nil)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .offset(x: isMenuExpanded ? -40 : 0)
-                    Spacer()
-                }
-            }
-            .edgesIgnoringSafeArea(.trailing)
-        }
-    }
-    
-    private func expandedMenu(isPortrait: Bool) -> some View {
-        Group {
-            if isPortrait {
-                VStack(spacing: 1) {
-                    HStack(spacing: 30) {
-                        menuButton(icon: "1.circle", action: {})
-                        menuButton(icon: "2.circle", action: {})
-                        menuButton(icon: "3.circle", action: {})
-                        menuButton(icon: "4.circle", action: {})
-                    }
-                    .padding(.bottom, 8)
-                    
-                    Button(action: {
-                        withAnimation(.spring()) {
-                            isMenuExpanded.toggle()
-                        }
-                    }) {
-                        Image(systemName: "chevron.down")
-                            .foregroundColor(.white)
-                            .font(.system(size: 30))
-                    }
-                }
-            } else {
-                HStack(spacing: 1) {
-                    VStack(spacing: 30) {
-                        menuButton(icon: "1.circle", action: {})
-                        menuButton(icon: "2.circle", action: {})
-                        menuButton(icon: "3.circle", action: {})
-                        menuButton(icon: "4.circle", action: {})
-                    }
-                    
-                    Button(action: {
-                        withAnimation(.spring()) {
-                            isMenuExpanded.toggle()
-                        }
-                    }) {
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.white)
-                            .font(.system(size: 30))
-                    }
-                }
-            }
-        }
-    }
-    
-    private func collapsedMenu(isPortrait: Bool) -> some View {
-        Button(action: {
-            withAnimation(.spring()) {
-                isMenuExpanded.toggle()
-            }
-        }) {
-            Image(systemName: isPortrait ? "chevron.up.circle.fill" : "chevron.left.circle.fill")
-                .foregroundColor(.white)
-                .font(.system(size: 30))
-        }
-        .padding(isPortrait ? .bottom : .trailing, 50)
-    }
-    
-    private func menuButton(icon: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .foregroundColor(.white)
-                .font(.system(size: 24))
-                .frame(width: 60, height: 60)
         }
     }
 }
