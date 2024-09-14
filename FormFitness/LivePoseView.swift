@@ -135,7 +135,7 @@ struct LivePoseView: View {
                             collapsedMenu
                         }
                     }
-                    .frame(height: isMenuExpanded ? 80 : 80)
+                    .frame(height: isMenuExpanded ? 120 : 80)
                     .frame(width: geometry.size.width * 0.8)
                     .background(isMenuExpanded ? Color.black.opacity(0.5) : nil)
                     .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -162,12 +162,24 @@ struct LivePoseView: View {
     }
     
     private var expandedMenu: some View {
-        HStack(spacing: 30) {
-            // TODO: provide functionality here
-            menuButton(icon: "1.circle", action: {})
-            menuButton(icon: "2.circle", action: {})
-            menuButton(icon: "3.circle", action: {})
-            menuButton(icon: "4.circle", action: {})
+        VStack(spacing: 1) {
+            HStack(spacing: 30) {
+                // TODO: implement buttons
+                menuButton(icon: "1.circle", action: {})
+                menuButton(icon: "2.circle", action: {})
+                menuButton(icon: "3.circle", action: {})
+                menuButton(icon: "4.circle", action: {})
+            }
+            
+            Button(action: {
+                withAnimation(.spring()) {
+                    isMenuExpanded.toggle()
+                }
+            }) {
+                Image(systemName: "chevron.down")
+                    .foregroundColor(.white)
+                    .font(.system(size: 30))
+            }
         }
     }
     
