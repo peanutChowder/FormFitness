@@ -149,6 +149,10 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             DispatchQueue.main.async {
                 self.liveTrackingFrame = result
             }
+        } else {
+            DispatchQueue.main.async {
+                self.liveTrackingFrame = nil
+            }
         }
     }
 }
