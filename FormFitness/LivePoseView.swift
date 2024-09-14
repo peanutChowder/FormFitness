@@ -124,7 +124,25 @@ struct CameraView: UIViewRepresentable {
         let view = VideoPreviewView()
         view.videoPreviewLayer.session = session
         view.videoPreviewLayer.videoGravity = .resizeAspectFill
+        view.videoPreviewLayer.connection?.videoRotationAngle = phoneOrientationToVideoAngle()
         return view
+    }
+    
+    func phoneOrientationToVideoAngle() -> CGFloat {
+        let phoneOrientation = UIDevice.current.orientation
+        
+        switch phoneOrientation {
+        case .portrait:
+            return 90
+        case .landscapeLeft:
+            logger.critical("left")
+            return 180
+        case .landscapeRight:
+            logger.critical("right")
+            return 0
+        @unknown default:
+            return 0
+        }
     }
     
     func updateUIView(_ uiView: VideoPreviewView, context: Context) {}
