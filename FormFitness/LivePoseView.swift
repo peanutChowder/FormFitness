@@ -29,18 +29,18 @@ struct LivePoseView: View {
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var showRotationPromptView = false
     
-    @State private var isStaticPoseLocked = true
+    @State private var isStaticPoseLocked = true // TODO: incorporate this
     @State private var poseOverlayOffset: CGSize = .zero
     @State private var poseOverlayScale: CGFloat = 1.0
     
-    
+    @State private var isMenuExpanded = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 cameraView()
-                
-                backButton(geometry: geometry)
+                bottomSlidingMenu
+//                backButton(geometry: geometry) TODO: incorporate this into new menu
                 
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
@@ -119,6 +119,77 @@ struct LivePoseView: View {
                 .padding(.bottom, geometry.safeAreaInsets.bottom + 20)
                 Spacer()
             }
+        }
+    }
+    
+    private var bottomSlidingMenu: some View {
+        GeometryReader { geometry in
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    ZStack {
+                        if isMenuExpanded {
+                            expandedMenu
+                        } else {
+                            collapsedMenu
+                        }
+                    }
+                    .frame(height: isMenuExpanded ? 80 : 80)
+                    .frame(width: geometry.size.width * 0.8)
+                    .background(isMenuExpanded ? Color.black.opacity(0.5) : nil)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .offset(y: isMenuExpanded ? -40 : 0)
+                    .gesture(
+                        DragGesture()
+                            .onEnded { value in
+                                if value.translation.height < -10 {
+                                    withAnimation(.spring()) {
+                                        isMenuExpanded = true
+                                    }
+                                } else if value.translation.height > 10 {
+                                    withAnimation(.spring()) {
+                                        isMenuExpanded = false
+                                    }
+                                }
+                            }
+                    )
+                    Spacer()
+                }
+            }
+            .edgesIgnoringSafeArea(.bottom)
+        }
+    }
+    
+    private var expandedMenu: some View {
+        HStack(spacing: 30) {
+            // TODO: provide functionality here
+            menuButton(icon: "1.circle", action: {})
+            menuButton(icon: "2.circle", action: {})
+            menuButton(icon: "3.circle", action: {})
+            menuButton(icon: "4.circle", action: {})
+        }
+    }
+    
+    private var collapsedMenu: some View {
+        Button(action: {
+            withAnimation(.spring()) {
+                isMenuExpanded.toggle()
+            }
+        }) {
+            Image(systemName: "chevron.up.circle.fill")
+                .foregroundColor(.white)
+                .font(.system(size: 30))
+        }
+        .padding(.bottom, 50)
+    }
+    
+    private func menuButton(icon: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: icon)
+                .foregroundColor(.white)
+                .font(.system(size: 24))
+                .frame(width: 60, height: 60)
         }
     }
 }
