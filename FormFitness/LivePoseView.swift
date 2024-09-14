@@ -29,6 +29,10 @@ struct LivePoseView: View {
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var showRotationPromptView = false
     
+    @State private var poseOverlayOffset: CGSize = .zero
+    @State private var poseOverlayScale: CGFloat = 1.0
+    
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -51,6 +55,20 @@ struct LivePoseView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all)
+                                .offset(poseOverlayOffset)
+                                .scaleEffect(poseOverlayScale)
+                                .gesture(
+                                    DragGesture()
+                                        .onChanged { value in
+                                            poseOverlayOffset = value.translation
+                                        }
+                                )
+                                .gesture(
+                                    MagnificationGesture()
+                                        .onChanged { value in
+                                            poseOverlayScale = value
+                                        }
+                                )
                         }
                     }
                 }
