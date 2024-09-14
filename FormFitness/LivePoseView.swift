@@ -56,6 +56,7 @@ struct LivePoseView: View {
             logger.debug("LivePoseView: Orientation changed: \(newOrientation.rawValue), showRotationPromptView: \(showRotationPromptView)")
         })
         .onAppear {
+            orientation = UIDevice.current.orientation
             PerfectFormManager.shared.loadStaticForm(exerciseImg: exerciseImg)
             cameraManager.changePerfectFormPose(to: exerciseImg)
         }
