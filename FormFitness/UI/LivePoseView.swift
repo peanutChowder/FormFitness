@@ -39,9 +39,7 @@ struct LivePoseView: View {
         GeometryReader { geometry in
             ZStack {
                 cameraView()
-                SlidingMenu(isExpanded: $isMenuExpanded, orientation: orientation)
-//                backButton(geometry: geometry) TODO: incorporate this into new menu
-                
+                SlidingMenu(isExpanded: $isMenuExpanded, presentationMode: _presentationMode, orientation: orientation)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
@@ -99,26 +97,6 @@ struct LivePoseView: View {
                             )
                     }
                 }
-            }
-        }
-    }
-    
-    private func backButton(geometry: GeometryProxy) -> some View {
-        VStack {
-            Spacer()
-            HStack {
-                Button(action: {
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.black.opacity(0.5))
-                        .clipShape(Circle())
-                }
-                .padding(.leading, 20)
-                .padding(.bottom, geometry.safeAreaInsets.bottom + 20)
-                Spacer()
             }
         }
     }

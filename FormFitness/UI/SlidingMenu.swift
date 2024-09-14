@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SlidingMenu: View {
     @Binding var isExpanded: Bool
+    @Environment(\.presentationMode) var presentationMode
     let orientation: UIDeviceOrientation
     
     var body: some View {
@@ -93,7 +94,9 @@ struct SlidingMenu: View {
             menuButton(icon: "1.circle", action: {})
             menuButton(icon: "2.circle", action: {})
             menuButton(icon: "3.circle", action: {})
-            menuButton(icon: "4.circle", action: {})
+            menuButton(icon: "door.left.hand.open", action: {
+                presentationMode.wrappedValue.dismiss()
+            })
         }
     }
     
