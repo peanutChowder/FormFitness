@@ -29,7 +29,9 @@ struct LivePoseView: View {
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var showRotationPromptView = false
     
+    // static pose attributes
     @State private var isStaticPoseLocked = true
+    @State private var isStaticPoseMirrored = false
     @State private var poseOverlayOffset: CGSize = .zero
     @State private var poseOverlayScale: CGFloat = 1.0
     
@@ -39,7 +41,7 @@ struct LivePoseView: View {
         GeometryReader { geometry in
             ZStack {
                 cameraView()
-                SlidingMenu(isExpanded: $isMenuExpanded, isStaticPoseLocked: $isStaticPoseLocked, presentationMode: _presentationMode, orientation: orientation)
+                SlidingMenu(isExpanded: $isMenuExpanded, isStaticPoseLocked: $isStaticPoseLocked, isStaticPoseMirrored: $isStaticPoseMirrored, presentationMode: _presentationMode, orientation: orientation)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
@@ -83,6 +85,7 @@ struct LivePoseView: View {
                             .edgesIgnoringSafeArea(.all)
                             .offset(poseOverlayOffset)
                             .scaleEffect(poseOverlayScale)
+                            .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in

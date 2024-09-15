@@ -10,6 +10,7 @@ import SwiftUI
 struct SlidingMenu: View {
     @Binding var isExpanded: Bool
     @Binding var isStaticPoseLocked: Bool
+    @Binding var isStaticPoseMirrored: Bool
     @Environment(\.presentationMode) var presentationMode
     let orientation: UIDeviceOrientation
     
@@ -93,7 +94,9 @@ struct SlidingMenu: View {
     private var menuButtons: some View {
         Group {
             menuButton(icon: "1.circle", action: {})
-            menuButton(icon: "2.circle", action: {})
+            menuButton(icon: "arrow.left.arrow.right", action: {
+                isStaticPoseMirrored.toggle()
+            })
             menuButton(icon: isStaticPoseLocked ? "lock.fill" : "lock.open.fill", action: {
                 withAnimation(.spring()) {
                     isStaticPoseLocked.toggle()
