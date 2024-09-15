@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SlidingMenu: View {
     @Binding var isExpanded: Bool
+    @Binding var isStaticPoseLocked: Bool
     @Environment(\.presentationMode) var presentationMode
     let orientation: UIDeviceOrientation
     
@@ -93,7 +94,11 @@ struct SlidingMenu: View {
         Group {
             menuButton(icon: "1.circle", action: {})
             menuButton(icon: "2.circle", action: {})
-            menuButton(icon: "3.circle", action: {})
+            menuButton(icon: isStaticPoseLocked ? "lock.fill" : "lock.open.fill", action: {
+                withAnimation(.spring()) {
+                    isStaticPoseLocked.toggle()
+                }
+            })
             menuButton(icon: "door.left.hand.open", action: {
                 presentationMode.wrappedValue.dismiss()
             })
@@ -131,6 +136,7 @@ struct SlidingMenu: View {
                 .foregroundColor(.white)
                 .font(.system(size: 24))
                 .frame(width: 60, height: 60)
+                .animation(.spring(response: 0.1, dampingFraction: 0.6, blendDuration: 0.25), value: icon)
         }
     }
 }

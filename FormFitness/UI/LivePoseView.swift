@@ -29,7 +29,7 @@ struct LivePoseView: View {
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var showRotationPromptView = false
     
-    @State private var isStaticPoseLocked = true // TODO: incorporate this
+    @State private var isStaticPoseLocked = true
     @State private var poseOverlayOffset: CGSize = .zero
     @State private var poseOverlayScale: CGFloat = 1.0
     
@@ -39,7 +39,7 @@ struct LivePoseView: View {
         GeometryReader { geometry in
             ZStack {
                 cameraView()
-                SlidingMenu(isExpanded: $isMenuExpanded, presentationMode: _presentationMode, orientation: orientation)
+                SlidingMenu(isExpanded: $isMenuExpanded, isStaticPoseLocked: $isStaticPoseLocked, presentationMode: _presentationMode, orientation: orientation)
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
@@ -86,13 +86,17 @@ struct LivePoseView: View {
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in
-                                        poseOverlayOffset = value.translation
+                                        if !isStaticPoseLocked {
+                                            poseOverlayOffset = value.translation
+                                        }
                                     }
                             )
                             .gesture(
                                 MagnificationGesture()
                                     .onChanged { value in
-                                        poseOverlayScale = value
+                                        if !isStaticPoseLocked {
+                                            poseOverlayScale = value
+                                        }
                                     }
                             )
                     }
