@@ -15,25 +15,6 @@ struct Exercise: Identifiable {
     var isFavorite: Bool = false
 }
 
-class ExerciseStore: ObservableObject {
-    @Published var exercises: [Exercise] = [
-        Exercise(name: "Push-ups", imageName: "pushups"),
-        Exercise(name: "Squats", imageName: "squats"),
-        Exercise(name: "Downwawrd Dog", imageName: "downward-dog", iconName: "downward-dog-icon"),
-        Exercise(name: "Plank", imageName: "plank3")
-    ]
-    
-    var favoriteExercises: [Exercise] {
-        exercises.filter { $0.isFavorite }
-    }
-    
-    func toggleFavorite(for exercise: Exercise) {
-        if let index = exercises.firstIndex(where: { $0.id == exercise.id }) {
-            exercises[index].isFavorite.toggle()
-        }
-    }
-}
-
 struct ContentView: View {
     @StateObject private var exerciseStore = ExerciseStore()
     @State private var selectedTab = 0
