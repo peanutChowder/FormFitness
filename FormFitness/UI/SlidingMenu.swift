@@ -22,6 +22,7 @@ struct SlidingMenu: View {
     // use this to exit the LivePoseView (back to main menu)
     @Environment(\.presentationMode) var presentationMode
     
+    @State private var isResetButtonSpinning = false
     
     var body: some View {
         Group {
@@ -103,17 +104,27 @@ struct SlidingMenu: View {
     private var menuButtons: some View {
         Group {
             menuButton(icon: "arrow.clockwise", action: {
+                // animate button
+                withAnimation(.timingCurve(0.37, 0, 0.63, 1, duration: 0.5)) { isResetButtonSpinning = true
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    isResetButtonSpinning = false
+                 }
+                
+                // reset static pose scale & location
                 poseOverlayOffset = .zero
                 poseOverlayScale = 1.0
             })
+            .rotationEffect(isResetButtonSpinning ? .degrees(270) : .degrees(0))
+
             menuButton(icon: "arrow.left.arrow.right", action: {
                 isStaticPoseMirrored.toggle()
             })
+            
             menuButton(icon: isStaticPoseLocked ? "lock.fill" : "lock.open.fill", action: {
-                withAnimation(.spring()) {
-                    isStaticPoseLocked.toggle()
-                }
+                    isStaticPoseLocked.toggle()    
             })
+            
             menuButton(icon: "door.left.hand.open", action: {
                 presentationMode.wrappedValue.dismiss()
             })
@@ -151,7 +162,6 @@ struct SlidingMenu: View {
                 .foregroundColor(.white)
                 .font(.system(size: 24))
                 .frame(width: 60, height: 60)
-                .animation(.spring(response: 0.1, dampingFraction: 0.6, blendDuration: 0.25), value: icon)
         }
     }
 }
