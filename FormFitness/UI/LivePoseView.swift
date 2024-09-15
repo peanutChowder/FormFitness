@@ -41,7 +41,15 @@ struct LivePoseView: View {
         GeometryReader { geometry in
             ZStack {
                 cameraView()
-                SlidingMenu(isExpanded: $isMenuExpanded, isStaticPoseLocked: $isStaticPoseLocked, isStaticPoseMirrored: $isStaticPoseMirrored, presentationMode: _presentationMode, orientation: orientation)
+                SlidingMenu(
+                    isExpanded: $isMenuExpanded,
+                    orientation: orientation,
+                    isStaticPoseLocked: $isStaticPoseLocked,
+                    isStaticPoseMirrored: $isStaticPoseMirrored,
+                    poseOverlayOffset: $poseOverlayOffset,
+                    poseOverlayScale: $poseOverlayScale,
+                    presentationMode: _presentationMode
+                )
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }

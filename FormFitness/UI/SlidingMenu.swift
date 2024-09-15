@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct SlidingMenu: View {
+    // sliding menu open/close
     @Binding var isExpanded: Bool
+    // display menu on bottom or side depending on orientation
+    let orientation: UIDeviceOrientation
+    
+    // static pose attributes to be modified by menu
     @Binding var isStaticPoseLocked: Bool
     @Binding var isStaticPoseMirrored: Bool
+    @Binding var poseOverlayOffset: CGSize
+    @Binding var poseOverlayScale: CGFloat
+    
+    // use this to exit the LivePoseView (back to main menu)
     @Environment(\.presentationMode) var presentationMode
-    let orientation: UIDeviceOrientation
+    
     
     var body: some View {
         Group {
@@ -93,7 +102,10 @@ struct SlidingMenu: View {
     
     private var menuButtons: some View {
         Group {
-            menuButton(icon: "1.circle", action: {})
+            menuButton(icon: "arrow.clockwise", action: {
+                poseOverlayOffset = .zero
+                poseOverlayScale = 1.0
+            })
             menuButton(icon: "arrow.left.arrow.right", action: {
                 isStaticPoseMirrored.toggle()
             })
