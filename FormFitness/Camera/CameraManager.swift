@@ -74,8 +74,8 @@ class CameraManager: NSObject, ObservableObject {
         UIGraphicsBeginImageContextWithOptions(self.pixelBufferSize, false, 1.0)
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         
-        // TODO: remove background
-        context.setFillColor(UIColor.black.withAlphaComponent(0.4).cgColor)
+        #warning ("TODO: fix image sizing")
+        context.setFillColor(UIColor.black.withAlphaComponent(0.0).cgColor)
         context.fill(CGRect(origin: .zero, size: self.pixelBufferSize))
         
         // Draw static pose
