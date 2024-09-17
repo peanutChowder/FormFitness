@@ -161,10 +161,8 @@ struct CameraView: UIViewRepresentable {
         case .portrait:
             return 90
         case .landscapeLeft:
-            logger.critical("left")
             return 180
         case .landscapeRight:
-            logger.critical("right")
             return 0
         @unknown default:
             return 0
