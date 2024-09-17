@@ -138,6 +138,23 @@ class PoseDetector {
         context.addLine(to: CGPoint(x: endX, y: endY))
         context.strokePath()
     }
+    
+    func calculatePoseOffset(livePose: VNHumanBodyPoseObservation, staticPose: VNHumanBodyPoseObservation, initialOffset: CGPoint) -> CGPoint {
+        let targetJoint: VNHumanBodyPoseObservation.JointName = .rightAnkle
+
+        guard let livePoint = try? livePose.recognizedPoint(targetJoint),
+              let staticPoint = try? staticPose.recognizedPoint(targetJoint),
+              livePoint.confidence > 0.1 && staticPoint.confidence > 0.1 else {
+            return .zero
+        }
+
+        let currentOffset = CGPoint(x: livePoint.location.x - staticPoint.location.x,
+                                    y: livePoint.location.y - staticPoint.location.y)
+        
+        let relativeOffset = CGPoint(x: currentOffset.x - initialOffset.x,
+                                     y: currentOffset.y - initialOffset.y)
+        return relativeOffset
+    }
 }
 
 struct PerfectFormPose {

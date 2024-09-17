@@ -8,7 +8,10 @@ class CameraManager: NSObject, ObservableObject {
     @Published var setupError: String?
     @Published var liveTrackingFrame: UIImage?
     @Published var staticPose: UIImage?
-    
+    @Published var poseOffset: CGPoint = .zero
+    private var initialPoseOffset: CGPoint?
+    private let movementScaleFactor: CGFloat = 0.5 // Adjust this value to control movement sensitivity
+
     private var cancellables = Set<AnyCancellable>()
     private let poseDetector = PoseDetector()
     private var currentPose: String = ""
@@ -142,8 +145,21 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         uiImage.draw(in: CGRect(origin: .zero, size: currPixelBufferSize))
         
-        if let pose = poseDetector.detectPose(in: pixelBuffer) {
-            poseDetector.drawLivePose(pose: pose, context: context, imageSize: currPixelBufferSize)
+        if let livePose = poseDetector.detectPose(in: pixelBuffer),
+           let staticPose = PerfectFormManager.shared.perfectForms[currentPose]?.pose {
+            poseDetector.drawLivePose(pose: livePose, context: context, imageSize: currPixelBufferSize)
+            
+            if initialPoseOffset == nil {
+                initialPoseOffset = poseDetector.calculatePoseOffset(livePose: livePose, staticPose: staticPose, initialOffset: .zero)
+            }
+            
+            if let initialOffset = initialPoseOffset {
+                let offset = poseDetector.calculatePoseOffset(livePose: livePose, staticPose: staticPose, initialOffset: initialOffset)
+                DispatchQueue.main.async {
+                    self.poseOffset = CGPoint(x: offset.x * self.pixelBufferSize.width * self.movementScaleFactor,
+                                              y: -offset.y * self.pixelBufferSize.height * self.movementScaleFactor)
+                }
+            }
         }
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -152,4 +168,9 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             self.liveTrackingFrame = result
         }
     }
-}
+
+    func resetInitialPoseOffset() {
+        initialPoseOffset = nil
+    }
+ }
+

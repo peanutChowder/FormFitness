@@ -34,6 +34,8 @@ struct LivePoseView: View {
     @State private var isStaticPoseMirrored = false
     @State private var poseOverlayOffset: CGSize = .zero
     @State private var poseOverlayScale: CGFloat = 1.0
+    @State private var useAutoPoseFollowing = false
+    
     
     @State private var isMenuExpanded = false
     
@@ -91,13 +93,13 @@ struct LivePoseView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .edgesIgnoringSafeArea(.all)
-                            .offset(poseOverlayOffset)
+                            .offset(useAutoPoseFollowing ? CGSize(width: cameraManager.poseOffset.x, height: cameraManager.poseOffset.y) : poseOverlayOffset)
                             .scaleEffect(poseOverlayScale)
                             .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in
-                                        if !isStaticPoseLocked {
+                                        if !isStaticPoseLocked && !useAutoPoseFollowing {
                                             poseOverlayOffset = value.translation
                                         }
                                     }
