@@ -34,7 +34,7 @@ struct LivePoseView: View {
     @State private var isStaticPoseMirrored = false
     @State private var poseOverlayOffset: CGSize = .zero
     @State private var poseOverlayScale: CGFloat = 1.0
-    @State private var useAutoPoseFollowing = false
+    @State private var useAutoPoseFollowing = true
     
     
     @State private var isMenuExpanded = false
@@ -54,6 +54,10 @@ struct LivePoseView: View {
                 )
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
+            .onAppear {
+                cameraManager.setCameraViewSize(cameraViewSize: geometry.size)
+                logger.debug("full zstack: \(geometry.size.width)x\(geometry.size.height)")
+            }
         }
         .modifier(DeviceRotationViewModifier { newOrientation in
             orientation = newOrientation
@@ -78,40 +82,45 @@ struct LivePoseView: View {
             if showRotationPromptView {
                 RotationPromptView()
             } else {
-                ZStack {
-                    if let currentFrame = cameraManager.liveTrackingFrame {
-                        Image(uiImage: currentFrame)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .edgesIgnoringSafeArea(.all)
-                    } else {
-                        CameraView(session: cameraManager.session)
-                            .edgesIgnoringSafeArea(.all)
+                GeometryReader { geometry in
+                    ZStack {
+                        if let currentFrame = cameraManager.liveTrackingFrame {
+                            Image(uiImage: currentFrame)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .edgesIgnoringSafeArea(.all)
+                        } else {
+                            CameraView(session: cameraManager.session)
+                                .edgesIgnoringSafeArea(.all)
+                        }
+                        if let staticPose = cameraManager.staticPose {
+                            Image(uiImage: staticPose)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .edgesIgnoringSafeArea(.all)
+                                .position(x: cameraManager.tempPosition.x, y: cameraManager.tempPosition.y)
+                                .scaleEffect(poseOverlayScale)
+                                .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
+                                .gesture(
+                                    DragGesture()
+                                        .onChanged { value in
+                                            if !isStaticPoseLocked && !useAutoPoseFollowing {
+                                                poseOverlayOffset = value.translation
+                                            }
+                                        }
+                                )
+                                .gesture(
+                                    MagnificationGesture()
+                                        .onChanged { value in
+                                            if !isStaticPoseLocked {
+                                                poseOverlayScale = value
+                                            }
+                                        }
+                                )
+                        }
                     }
-                    if let staticPose = cameraManager.staticPose {
-                        Image(uiImage: staticPose)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .edgesIgnoringSafeArea(.all)
-                            .offset(useAutoPoseFollowing ? CGSize(width: cameraManager.poseOffset.x, height: cameraManager.poseOffset.y) : poseOverlayOffset)
-                            .scaleEffect(poseOverlayScale)
-                            .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        if !isStaticPoseLocked && !useAutoPoseFollowing {
-                                            poseOverlayOffset = value.translation
-                                        }
-                                    }
-                            )
-                            .gesture(
-                                MagnificationGesture()
-                                    .onChanged { value in
-                                        if !isStaticPoseLocked {
-                                            poseOverlayScale = value
-                                        }
-                                    }
-                            )
+                    .onAppear {
+                        logger.debug("from within: \(geometry.size.width) x \(geometry.size.height)")
                     }
                 }
             }

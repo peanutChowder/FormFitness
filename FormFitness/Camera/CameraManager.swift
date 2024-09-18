@@ -9,6 +9,10 @@ class CameraManager: NSObject, ObservableObject {
     @Published var liveTrackingFrame: UIImage?
     @Published var staticPose: UIImage?
     @Published var poseOffset: CGPoint = .zero
+    @Published var tempPosition: CGPoint = .zero
+    
+    private var cameraViewSize: CGSize = .zero
+
     private var initialPoseOffset: CGPoint?
     private let movementScaleFactor: CGFloat = 0.5 // Adjust this value to control movement sensitivity
 
@@ -67,6 +71,10 @@ class CameraManager: NSObject, ObservableObject {
         DispatchQueue.global(qos: .background).async { [weak self] in
             self?.session.startRunning()
         }
+    }
+    
+    func setCameraViewSize(cameraViewSize: CGSize) {
+        self.cameraViewSize = cameraViewSize
     }
     
     func setStaticPoseImg(pose: VNHumanBodyPoseObservation) -> UIImage? {
@@ -149,16 +157,27 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
            let staticPose = PerfectFormManager.shared.perfectForms[currentPose]?.pose {
             poseDetector.drawLivePose(pose: livePose, context: context, imageSize: currPixelBufferSize)
             
-            if initialPoseOffset == nil {
-                initialPoseOffset = poseDetector.calculatePoseOffset(livePose: livePose, staticPose: staticPose, initialOffset: .zero)
-            }
+            // TODO: delete -- testing
+//            poseDetector.testDrawDotAtOrigin(context: context)
             
-            if let initialOffset = initialPoseOffset {
-                let offset = poseDetector.calculatePoseOffset(livePose: livePose, staticPose: staticPose, initialOffset: initialOffset)
-                DispatchQueue.main.async {
-                    self.poseOffset = CGPoint(x: offset.x * self.pixelBufferSize.width * self.movementScaleFactor,
-                                              y: -offset.y * self.pixelBufferSize.height * self.movementScaleFactor)
+            #warning("TODO: temporary setup for pose offset calculation")
+            // TODO: seems like cameraViewSize is the proper scaling factor
+            let tempPoint = self.poseDetector.getJointCoord(for: .rightWrist, in: livePose, on: context, size: cameraViewSize)
+            
+            
+            if tempPoint != .zero {
+                if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: .rightWrist) {
+                    
+                    let xi = tempPoint.x + normalizedHandOffset.x * cameraViewSize.width
+                    let yi = tempPoint.y + normalizedHandOffset.y * cameraViewSize.height
+                    DispatchQueue.main.async {
+                        self.tempPosition = CGPoint(x: xi, y: yi)
+                    }
                 }
+                
+                
+                
+      
             }
         }
         let result = UIGraphicsGetImageFromCurrentImageContext()
@@ -167,10 +186,6 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         DispatchQueue.main.async {
             self.liveTrackingFrame = result
         }
-    }
-
-    func resetInitialPoseOffset() {
-        initialPoseOffset = nil
     }
  }
 

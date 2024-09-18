@@ -65,6 +65,21 @@ class PoseDetector {
         return result
     }
     
+    func getJointCoord(for joint: VNHumanBodyPoseObservation.JointName,
+                       in pose: VNHumanBodyPoseObservation,
+                       on context: CGContext,
+                       size: CGSize
+    ) -> CGPoint {
+        guard let point = try? pose.recognizedPoint(joint),
+              point.confidence > 0.1 else {
+            return .zero
+        }
+        let x = point.location.x * size.width
+        let y = (1 - point.location.y) * size.height
+
+        return CGPoint(x: x, y: y)
+    }
+    
     private func drawPoseOverlay(pose: VNHumanBodyPoseObservation, on context: CGContext, imageSize: CGSize) {
         let connections: [(VNHumanBodyPoseObservation.JointName, VNHumanBodyPoseObservation.JointName)] = [
             (.nose, .neck),
@@ -118,6 +133,12 @@ class PoseDetector {
         context.fillPath()
     }
     
+    func testDrawDotAtOrigin(context: CGContext) {
+        context.setFillColor(UIColor.systemPink.cgColor)
+        context.addArc(center: CGPoint(x: 0, y: 0), radius: 60, startAngle: 0, endAngle: CGFloat.pi * 2, clockwise: true)
+        context.fillPath()
+    }
+    
     private func drawLine(from startPoint: VNHumanBodyPoseObservation.JointName,
                           to endPoint: VNHumanBodyPoseObservation.JointName,
                           in pose: VNHumanBodyPoseObservation,
@@ -154,6 +175,19 @@ class PoseDetector {
         let relativeOffset = CGPoint(x: currentOffset.x - initialOffset.x,
                                      y: currentOffset.y - initialOffset.y)
         return relativeOffset
+    }
+    
+    func calcNormalizedStaticJointOffset(staticPose: VNHumanBodyPoseObservation, joint: VNHumanBodyPoseObservation.JointName) -> CGPoint? {
+        guard let pointRelativeToTopLeft = try? staticPose.recognizedPoint(joint) else {
+            return nil
+        }
+        
+        if pointRelativeToTopLeft.confidence > 0.1 {
+            return CGPoint(x: CGFloat(pointRelativeToTopLeft.location.x - 0.5),
+                           y: CGFloat(pointRelativeToTopLeft.location.y - 0.5))
+        } else {
+            return nil
+        }
     }
 }
 
