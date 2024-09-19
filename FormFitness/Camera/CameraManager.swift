@@ -20,6 +20,7 @@ class CameraManager: NSObject, ObservableObject {
     private let poseDetector = PoseDetector()
     private var currentPose: String = ""
     private var pixelBufferSize: CGSize = .zero
+    private var isStaticPoseFollowing = false;
     
     override init() {
         super.init()
@@ -75,6 +76,10 @@ class CameraManager: NSObject, ObservableObject {
     
     func setCameraViewSize(cameraViewSize: CGSize) {
         self.cameraViewSize = cameraViewSize
+    }
+    
+    func setIsStaticPoseFollowing(to isStaticPoseFollowing: Bool) {
+        self.isStaticPoseFollowing = isStaticPoseFollowing
     }
     
     func setStaticPoseImg(pose: VNHumanBodyPoseObservation) -> UIImage? {
@@ -157,22 +162,24 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             poseDetector.drawLivePose(pose: livePose, context: context, imageSize: currPixelBufferSize)
             
             
-            let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: .rightWrist, pose: livePose, context: context, size: cameraViewSize)
-            
-            
-            if liveJointAbsoluteCoords != .zero {
-                if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: .rightWrist) {
-                    
-                    let staticPoseAdjustedX = liveJointAbsoluteCoords.x + normalizedHandOffset.x * cameraViewSize.width
-                    let staticPoseAdjustedY = liveJointAbsoluteCoords.y + normalizedHandOffset.y * cameraViewSize.height
-                    DispatchQueue.main.async {
-                        self.staticPoseCenter = CGPoint(x: staticPoseAdjustedX, y: staticPoseAdjustedY)
+            if isStaticPoseFollowing {
+                let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: .rightWrist, pose: livePose, context: context, size: cameraViewSize)
+                
+                
+                if liveJointAbsoluteCoords != .zero {
+                    if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: .rightWrist) {
+                        
+                        let staticPoseAdjustedX = liveJointAbsoluteCoords.x + normalizedHandOffset.x * cameraViewSize.width
+                        let staticPoseAdjustedY = liveJointAbsoluteCoords.y + normalizedHandOffset.y * cameraViewSize.height
+                        DispatchQueue.main.async {
+                            self.staticPoseCenter = CGPoint(x: staticPoseAdjustedX, y: staticPoseAdjustedY)
+                        }
                     }
                 }
-                
-                
-                
-      
+            } else {
+                DispatchQueue.main.async {
+                    self.staticPoseCenter = CGPoint(x: self.cameraViewSize.width / 2, y: self.cameraViewSize.height / 2)
+                }
             }
         }
         let result = UIGraphicsGetImageFromCurrentImageContext()

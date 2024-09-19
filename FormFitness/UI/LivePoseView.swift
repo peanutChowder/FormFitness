@@ -34,7 +34,7 @@ struct LivePoseView: View {
     @State private var isStaticPoseMirrored = false
     @State private var poseOverlayOffset: CGSize = .zero
     @State private var poseOverlayScale: CGFloat = 1.0
-    @State private var useAutoPoseFollowing = true
+    @State private var isStaticPoseFollowing = false
     
     
     @State private var isMenuExpanded = false
@@ -46,12 +46,16 @@ struct LivePoseView: View {
                 SlidingMenu(
                     isExpanded: $isMenuExpanded,
                     orientation: orientation,
+                    isStaticPoseFollowing: $isStaticPoseFollowing,
                     isStaticPoseLocked: $isStaticPoseLocked,
                     isStaticPoseMirrored: $isStaticPoseMirrored,
                     poseOverlayOffset: $poseOverlayOffset,
                     poseOverlayScale: $poseOverlayScale,
                     presentationMode: _presentationMode
                 )
+                .onChange(of: isStaticPoseFollowing) {
+                    self.cameraManager.setIsStaticPoseFollowing(to: isStaticPoseFollowing)
+                }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .onAppear {
@@ -98,7 +102,10 @@ struct LivePoseView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all)
-                                .position(x: cameraManager.staticPoseCenter.x, y: cameraManager.staticPoseCenter.y)
+                                .position(
+                                      x: isStaticPoseFollowing ? cameraManager.staticPoseCenter.x : cameraManager.staticPoseCenter.x + poseOverlayOffset.width,
+                                      y: isStaticPoseFollowing ? cameraManager.staticPoseCenter.y : cameraManager.staticPoseCenter.y + poseOverlayOffset.height
+                                  )
                                 .scaleEffect(poseOverlayScale)
                                 .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
                                 .gesture(

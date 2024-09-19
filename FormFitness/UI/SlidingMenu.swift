@@ -14,6 +14,7 @@ struct SlidingMenu: View {
     let orientation: UIDeviceOrientation
     
     // static pose attributes to be modified by menu
+    @Binding var isStaticPoseFollowing: Bool
     @Binding var isStaticPoseLocked: Bool
     @Binding var isStaticPoseMirrored: Bool
     @Binding var poseOverlayOffset: CGSize
@@ -72,7 +73,7 @@ struct SlidingMenu: View {
         }
         .frame(
             width: isPortrait ? geometry.size.width * 0.8 : (isExpanded ? 100 : 80),
-            height: isPortrait ? (isExpanded ? 100 : 80) : geometry.size.height * 0.8
+            height: isPortrait ? (isExpanded ? 150 : 80) : geometry.size.height * 0.8
         )
         .background(isExpanded ? Color.black.opacity(0.5) : nil)
         .clipShape(RoundedRectangle(cornerRadius: 20))
@@ -122,12 +123,26 @@ struct SlidingMenu: View {
             })
             
             menuButton(icon: isStaticPoseLocked ? "lock.fill" : "lock.open.fill", action: {
-                    isStaticPoseLocked.toggle()    
+                    isStaticPoseLocked.toggle()
+                
+                // cannot allow pose following and custom user resizing simultaneously
+                if (!isStaticPoseLocked) {
+                    isStaticPoseFollowing = false
+                }
             })
             
-            menuButton(icon: "door.left.hand.open", action: {
-                presentationMode.wrappedValue.dismiss()
+            menuButton(icon: isStaticPoseFollowing ? "person.fill" : "person", action: {
+                isStaticPoseFollowing.toggle()
+                
+                // cannot allow pose following and custom user resizing simultaneously
+                if (isStaticPoseFollowing) {
+                    isStaticPoseLocked = true
+                }
             })
+            
+//            menuButton(icon: "door.left.hand.open", action: {
+//                presentationMode.wrappedValue.dismiss()
+//            })
         }
     }
     
