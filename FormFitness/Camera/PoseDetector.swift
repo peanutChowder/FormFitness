@@ -65,9 +65,9 @@ class PoseDetector {
         return result
     }
     
-    func getJointCoord(for joint: VNHumanBodyPoseObservation.JointName,
-                       in pose: VNHumanBodyPoseObservation,
-                       on context: CGContext,
+    func getJointCoordinateFromContext(joint: VNHumanBodyPoseObservation.JointName,
+                       pose: VNHumanBodyPoseObservation,
+                       context: CGContext,
                        size: CGSize
     ) -> CGPoint {
         guard let point = try? pose.recognizedPoint(joint),

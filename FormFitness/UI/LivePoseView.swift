@@ -98,13 +98,13 @@ struct LivePoseView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all)
-                                .position(x: cameraManager.tempPosition.x, y: cameraManager.tempPosition.y)
+                                .position(x: cameraManager.staticPoseCenter.x, y: cameraManager.staticPoseCenter.y)
                                 .scaleEffect(poseOverlayScale)
                                 .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
                                 .gesture(
                                     DragGesture()
                                         .onChanged { value in
-                                            if !isStaticPoseLocked && !useAutoPoseFollowing {
+                                            if !isStaticPoseLocked && !isStaticPoseFollowing {
                                                 poseOverlayOffset = value.translation
                                             }
                                         }

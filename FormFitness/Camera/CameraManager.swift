@@ -9,7 +9,7 @@ class CameraManager: NSObject, ObservableObject {
     @Published var liveTrackingFrame: UIImage?
     @Published var staticPose: UIImage?
     @Published var poseOffset: CGPoint = .zero
-    @Published var tempPosition: CGPoint = .zero
+    @Published var staticPoseCenter: CGPoint = .zero
     
     private var cameraViewSize: CGSize = .zero
 
@@ -94,8 +94,7 @@ class CameraManager: NSObject, ObservableObject {
         
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        
-        // Pass static pose image to UI
+
         return result
     }
     
@@ -157,21 +156,17 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
            let staticPose = PerfectFormManager.shared.perfectForms[currentPose]?.pose {
             poseDetector.drawLivePose(pose: livePose, context: context, imageSize: currPixelBufferSize)
             
-            // TODO: delete -- testing
-//            poseDetector.testDrawDotAtOrigin(context: context)
             
-            #warning("TODO: temporary setup for pose offset calculation")
-            // TODO: seems like cameraViewSize is the proper scaling factor
-            let tempPoint = self.poseDetector.getJointCoord(for: .rightWrist, in: livePose, on: context, size: cameraViewSize)
+            let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: .rightWrist, pose: livePose, context: context, size: cameraViewSize)
             
             
-            if tempPoint != .zero {
+            if liveJointAbsoluteCoords != .zero {
                 if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: .rightWrist) {
                     
-                    let xi = tempPoint.x + normalizedHandOffset.x * cameraViewSize.width
-                    let yi = tempPoint.y + normalizedHandOffset.y * cameraViewSize.height
+                    let staticPoseAdjustedX = liveJointAbsoluteCoords.x + normalizedHandOffset.x * cameraViewSize.width
+                    let staticPoseAdjustedY = liveJointAbsoluteCoords.y + normalizedHandOffset.y * cameraViewSize.height
                     DispatchQueue.main.async {
-                        self.tempPosition = CGPoint(x: xi, y: yi)
+                        self.staticPoseCenter = CGPoint(x: staticPoseAdjustedX, y: staticPoseAdjustedY)
                     }
                 }
                 
