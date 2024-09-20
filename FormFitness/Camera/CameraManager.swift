@@ -10,9 +10,7 @@ class CameraManager: NSObject, ObservableObject {
     @Published var staticPose: UIImage?
     @Published var poseOffset: CGPoint = .zero
     @Published var staticPoseCenter: CGPoint = .zero
-    
     private var cameraViewSize: CGSize = .zero
-
     private var initialPoseOffset: CGPoint?
     private let movementScaleFactor: CGFloat = 0.5 // Adjust this value to control movement sensitivity
 
@@ -135,6 +133,12 @@ class CameraManager: NSObject, ObservableObject {
         
         changePerfectFormPose(to: self.currentPose)
     }
+    
+    func resetStaticPosePosition() {
+        DispatchQueue.main.async {
+            self.staticPoseCenter = CGPoint(x: self.cameraViewSize.width / 2, y: self.cameraViewSize.height / 2)
+        }
+    }
 }
 
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
@@ -175,10 +179,6 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
                             self.staticPoseCenter = CGPoint(x: staticPoseAdjustedX, y: staticPoseAdjustedY)
                         }
                     }
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.staticPoseCenter = CGPoint(x: self.cameraViewSize.width / 2, y: self.cameraViewSize.height / 2)
                 }
             }
         }

@@ -64,6 +64,10 @@ struct LivePoseView: View {
                 )
                 .onChange(of: isStaticPoseFollowing) {
                     self.cameraManager.setIsStaticPoseFollowing(to: isStaticPoseFollowing)
+                    self.cameraManager.resetStaticPosePosition()
+                }
+                .onChange(of: isStaticPoseLocked) {
+                    self.cameraManager.resetStaticPosePosition()
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
@@ -112,9 +116,9 @@ struct LivePoseView: View {
                                 .aspectRatio(contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all)
                                 .position(
-                                      x: isStaticPoseFollowing ? cameraManager.staticPoseCenter.x : cameraManager.staticPoseCenter.x + poseOverlayOffset.width,
-                                      y: isStaticPoseFollowing ? cameraManager.staticPoseCenter.y : cameraManager.staticPoseCenter.y + poseOverlayOffset.height
-                                  )
+                                    x: isStaticPoseFollowing ? cameraManager.staticPoseCenter.x : cameraManager.staticPoseCenter.x + poseOverlayOffset.width,
+                                    y: isStaticPoseFollowing ? cameraManager.staticPoseCenter.y : cameraManager.staticPoseCenter.y + poseOverlayOffset.height
+                                )
                                 .scaleEffect(poseOverlayScale)
                                 .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
                                 .gesture(
@@ -133,16 +137,17 @@ struct LivePoseView: View {
                                             }
                                         }
                                 )
+                                .onAppear() {
+                                    cameraManager.resetStaticPosePosition()
+                                }
                         }
-                    }
-                    .onAppear {
-                        logger.debug("from within: \(geometry.size.width) x \(geometry.size.height)")
                     }
                 }
             }
         }
     }
 }
+
 
 struct RotationPromptView: View {
     var body: some View {
