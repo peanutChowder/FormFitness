@@ -69,8 +69,8 @@ struct SlidingMenu: View {
             }
         }
         .frame(
-            width: isPortrait ? geometry.size.width * 0.8 : (isExpanded ? 100 : 80),
-            height: isPortrait ? (isExpanded ? 150 : 80) : geometry.size.height * 0.8
+            width: isPortrait ? geometry.size.width * 0.9 : (isExpanded ? 100 : 80),
+            height: isPortrait ? (isExpanded ? 100 : 80) : geometry.size.height * 0.9
         )
         .background(isExpanded ? Color.black.opacity(0.5) : nil)
         .clipShape(RoundedRectangle(cornerRadius: 20))

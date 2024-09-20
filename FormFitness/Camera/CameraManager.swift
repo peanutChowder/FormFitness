@@ -167,7 +167,7 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             
             if isStaticPoseFollowing {
-                let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: .rightWrist, pose: livePose, context: context, size: cameraViewSize)
+                let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: .rightAnkle, pose: livePose, context: context, size: cameraViewSize)
                 
                 
                 if liveJointAbsoluteCoords != .zero {
