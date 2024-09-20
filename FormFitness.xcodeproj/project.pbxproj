@@ -21,7 +21,7 @@
 		7309FBF22C86614E006C4B0F /* StaticMovements.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */; };
 		7309FBF42C86C38C006C4B0F /* LivePoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7309FBF32C86C38C006C4B0F /* LivePoseView.swift */; };
 		7309FBF62C86C74B006C4B0F /* ExerciseIcons.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */; };
-		73614B9B2C96539E0060DB15 /* SlidingMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73614B9A2C96539E0060DB15 /* SlidingMenu.swift */; };
+		73614B9B2C96539E0060DB15 /* LivePoseUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73614B9A2C96539E0060DB15 /* LivePoseUI.swift */; };
 		73614B9F2C978A830060DB15 /* ExerciseStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73614B9E2C978A830060DB15 /* ExerciseStore.swift */; };
 /* End PBXBuildFile section */
 
@@ -60,7 +60,7 @@
 		7309FBF12C86614E006C4B0F /* StaticMovements.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = StaticMovements.xcassets; sourceTree = "<group>"; };
 		7309FBF32C86C38C006C4B0F /* LivePoseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePoseView.swift; sourceTree = "<group>"; };
 		7309FBF52C86C74B006C4B0F /* ExerciseIcons.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ExerciseIcons.xcassets; sourceTree = "<group>"; };
-		73614B9A2C96539E0060DB15 /* SlidingMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingMenu.swift; sourceTree = "<group>"; };
+		73614B9A2C96539E0060DB15 /* LivePoseUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivePoseUI.swift; sourceTree = "<group>"; };
 		73614B9E2C978A830060DB15 /* ExerciseStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -153,7 +153,7 @@
 		73614B9C2C96542D0060DB15 /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				73614B9A2C96539E0060DB15 /* SlidingMenu.swift */,
+				73614B9A2C96539E0060DB15 /* LivePoseUI.swift */,
 				7309FBF32C86C38C006C4B0F /* LivePoseView.swift */,
 			);
 			path = UI;
@@ -306,7 +306,7 @@
 				7309FBE72C8462CB006C4B0F /* CameraManager.swift in Sources */,
 				73614B9F2C978A830060DB15 /* ExerciseStore.swift in Sources */,
 				7309FBEC2C86578E006C4B0F /* PerfectFormManager.swift in Sources */,
-				73614B9B2C96539E0060DB15 /* SlidingMenu.swift in Sources */,
+				73614B9B2C96539E0060DB15 /* LivePoseUI.swift in Sources */,
 				7309FBF42C86C38C006C4B0F /* LivePoseView.swift in Sources */,
 				7309FBEA2C84E47B006C4B0F /* PoseDetector.swift in Sources */,
 				7309FBEE2C865902006C4B0F /* UIImagePixelBuffer.swift in Sources */,
