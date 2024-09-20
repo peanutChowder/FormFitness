@@ -20,9 +20,6 @@ struct SlidingMenu: View {
     @Binding var poseOverlayOffset: CGSize
     @Binding var poseOverlayScale: CGFloat
     
-    // use this to exit the LivePoseView (back to main menu)
-    @Environment(\.presentationMode) var presentationMode
-    
     @State private var isResetButtonSpinning = false
     
     var body: some View {
@@ -139,10 +136,6 @@ struct SlidingMenu: View {
                     isStaticPoseLocked = true
                 }
             })
-            
-//            menuButton(icon: "door.left.hand.open", action: {
-//                presentationMode.wrappedValue.dismiss()
-//            })
         }
     }
     
@@ -177,6 +170,31 @@ struct SlidingMenu: View {
                 .foregroundColor(.white)
                 .font(.system(size: 24))
                 .frame(width: 60, height: 60)
+        }
+    }
+}
+
+struct ExitButton: View {
+    let action: () -> Void
+    @State private var isPressed = false
+    
+    var body: some View {
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.1)) {
+                isPressed = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                isPressed = false
+                action()
+            }
+        }) {
+            Image(systemName: "xmark")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(width: 36, height: 36)
+                .background(Color.black.opacity(0.6))
+                .clipShape(Circle())
+                .scaleEffect(isPressed ? 0.95 : 1.0)
         }
     }
 }

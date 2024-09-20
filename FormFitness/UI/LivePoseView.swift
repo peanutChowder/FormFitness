@@ -43,6 +43,16 @@ struct LivePoseView: View {
         GeometryReader { geometry in
             ZStack {
                 cameraView()
+                VStack {
+                    HStack {
+                        ExitButton {
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                        .padding(20)
+                        Spacer()
+                    }
+                    Spacer()
+                }
                 SlidingMenu(
                     isExpanded: $isMenuExpanded,
                     orientation: orientation,
@@ -50,8 +60,7 @@ struct LivePoseView: View {
                     isStaticPoseLocked: $isStaticPoseLocked,
                     isStaticPoseMirrored: $isStaticPoseMirrored,
                     poseOverlayOffset: $poseOverlayOffset,
-                    poseOverlayScale: $poseOverlayScale,
-                    presentationMode: _presentationMode
+                    poseOverlayScale: $poseOverlayScale
                 )
                 .onChange(of: isStaticPoseFollowing) {
                     self.cameraManager.setIsStaticPoseFollowing(to: isStaticPoseFollowing)
