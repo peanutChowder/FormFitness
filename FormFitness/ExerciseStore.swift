@@ -10,11 +10,17 @@ import Combine
 
 class ExerciseStore: ObservableObject {
     @Published var exercises: [Exercise] = [
-        Exercise(name: "Push-ups", imageName: "pushups"),
-        Exercise(name: "Squats", imageName: "squats"),
         Exercise(name: "Downwawrd Dog", imageName: "downward-dog", iconName: "downward-dog-icon"),
-        Exercise(name: "Plank", imageName: "plank3"),
-        Exercise(name: "Warrior 1", imageName: "warrior-1", iconName: "warrior-1-icon")
+        Exercise(name: "Plank", imageName: "plank3", iconName: "plank-icon"),
+        Exercise(name: "Warrior 1", imageName: "warrior-1", iconName: "warrior-1-icon"),
+        Exercise(name: "Warrior 2", imageName: "warrior-2", iconName: "warrior-2-icon"),
+        Exercise(name: "Child's Pose", imageName: "childs-pose", iconName: "childs-pose-icon"),
+        Exercise(name: "Tree Pose", imageName: "tree-pose", iconName: "tree-pose-icon"),
+        Exercise(name: "Bridge Pose", imageName: "bridge-pose", iconName: "bridge-pose-icon"),
+        Exercise(name: "Cobra Pose", imageName: "cobra", iconName: "cobra-icon"),
+        Exercise(name: "Chair Pose", imageName: "chair", iconName: "chair-icon"),
+        Exercise(name: "Bridge Pose", imageName: "bridge-pose", iconName: "bridge-pose-icon"),
+        Exercise(name: "Triangle Pose", imageName: "triangle", iconName: "triangle-icon")
     ]
     
     var favoriteExercises: [Exercise] {
