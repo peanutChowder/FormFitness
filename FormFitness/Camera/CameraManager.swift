@@ -5,16 +5,12 @@ import UIKit
 
 class CameraManager: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
-    @Published var setupError: String?
     @Published var liveTrackingFrame: UIImage?
     @Published var staticPose: UIImage?
-    @Published var poseOffset: CGPoint = .zero
     @Published var staticPoseCenter: CGPoint = .zero
     private var cameraViewSize: CGSize = .zero
-    private var initialPoseOffset: CGPoint?
     private let movementScaleFactor: CGFloat = 0.5 // Adjust this value to control movement sensitivity
 
-    private var cancellables = Set<AnyCancellable>()
     private let poseDetector = PoseDetector()
     private var currentPose: String = ""
     private var pixelBufferSize: CGSize = .zero
