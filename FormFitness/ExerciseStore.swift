@@ -8,6 +8,14 @@
 import Foundation
 import Combine
 
+struct Exercise: Identifiable {
+    let id = UUID()
+    let name: String
+    let imageName: String
+    var iconName: String? = ""
+    var isFavorite: Bool = false
+}
+
 class ExerciseStore: ObservableObject {
     @Published var exercises: [Exercise] = [
         Exercise(name: "Downwawrd Dog", imageName: "downward-dog", iconName: "downward-dog-icon"),

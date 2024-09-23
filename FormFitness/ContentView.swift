@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-struct Exercise: Identifiable {
-    let id = UUID()
-    let name: String
-    let imageName: String
-    var iconName: String? = ""
-    var isFavorite: Bool = false
-}
-
 struct ContentView: View {
     @StateObject private var exerciseStore = ExerciseStore()
     @State private var selectedTab = 0
