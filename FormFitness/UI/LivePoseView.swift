@@ -67,6 +67,7 @@ struct LivePoseView: View {
                     isStaticPoseResetClicked: $isStaticPoseResetClicked
                 )
                 .onChange(of: isStaticPoseFollowing) {
+                    logger.info("LivePoseView: isStaticPoseFollowing set to '\(isStaticPoseFollowing)'")
                     self.cameraManager.setIsStaticPoseFollowing(to: isStaticPoseFollowing)
                     self.cameraManager.resetStaticPosePosition()
                     if isStaticPoseFollowing {
@@ -130,7 +131,7 @@ struct LivePoseView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .edgesIgnoringSafeArea(.all)
-                                .position(staticPosePosition)
+                                .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
                                 .scaleEffect(staticPoseScale)
                                 .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
                                 .gesture(

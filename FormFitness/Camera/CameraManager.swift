@@ -73,6 +73,7 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     func setIsStaticPoseFollowing(to isStaticPoseFollowing: Bool) {
+        logger.info("CameraManager: isStaticPoseFollowing set to \(isStaticPoseFollowing)")
         self.isStaticPoseFollowing = isStaticPoseFollowing
     }
     
