@@ -100,11 +100,8 @@ struct SlidingMenu: View {
     
     private var menuButtons: some View {
         Group {
+            // Button for resetting pose scaling + translations
             menuButton(icon: "arrow.clockwise", action: {
-                // animate button
-                withAnimation(.timingCurve(0.37, 0, 0.63, 1, duration: 0.5)) { isResetButtonSpinning = true
-                }
-                
                 // Reset static pose scale & location by triggering LivePoseView onChange handler that calls
                 // cameraManager.resetStaticPosePosition()
                 isStaticPoseLocked.toggle()
@@ -113,12 +110,13 @@ struct SlidingMenu: View {
                  }
                 poseOverlayScale = 1.0
             })
-            .rotationEffect(isResetButtonSpinning ? .degrees(270) : .degrees(0))
-
+            
+            // Button to toggle which way pose is facing
             menuButton(icon: "arrow.left.arrow.right", action: {
                 isStaticPoseMirrored.toggle()
             })
             
+            // Button to toggle pose drag/scale gestures
             menuButton(icon: isStaticPoseLocked ? "lock.fill" : "lock.open.fill", action: {
                     isStaticPoseLocked.toggle()
                 
@@ -128,6 +126,7 @@ struct SlidingMenu: View {
                 }
             })
             
+            // Button to toggle pose following
             menuButton(icon: isStaticPoseFollowing ? "person.fill" : "person", action: {
                 isStaticPoseFollowing.toggle()
                 
