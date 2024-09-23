@@ -18,6 +18,7 @@ struct SlidingMenu: View {
     @Binding var isStaticPoseLocked: Bool
     @Binding var isStaticPoseMirrored: Bool
     @Binding var poseOverlayScale: CGFloat
+    @Binding var isStaticPoseResetClicked: Bool
     
     @State private var isResetButtonSpinning = false
     
@@ -104,10 +105,7 @@ struct SlidingMenu: View {
             menuButton(icon: "arrow.clockwise", action: {
                 // Reset static pose scale & location by triggering LivePoseView onChange handler that calls
                 // cameraManager.resetStaticPosePosition()
-                isStaticPoseLocked.toggle()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    isStaticPoseLocked.toggle()
-                 }
+                isStaticPoseResetClicked = true
                 poseOverlayScale = 1.0
             })
             

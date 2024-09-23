@@ -37,6 +37,7 @@ struct LivePoseView: View {
     @State private var isStaticPoseFollowing = false
     
     @State private var isMenuExpanded = false
+    @State private var isStaticPoseResetClicked = false
     
     @GestureState private var fingerLocation: CGPoint? = nil
     @GestureState private var startLocation: CGPoint? = nil
@@ -62,7 +63,8 @@ struct LivePoseView: View {
                     isStaticPoseFollowing: $isStaticPoseFollowing,
                     isStaticPoseLocked: $isStaticPoseLocked,
                     isStaticPoseMirrored: $isStaticPoseMirrored,
-                    poseOverlayScale: $staticPoseScale
+                    poseOverlayScale: $staticPoseScale,
+                    isStaticPoseResetClicked: $isStaticPoseResetClicked
                 )
                 .onChange(of: isStaticPoseFollowing) {
                     self.cameraManager.setIsStaticPoseFollowing(to: isStaticPoseFollowing)
@@ -77,6 +79,11 @@ struct LivePoseView: View {
                         staticPosePosition = cameraManager.staticPoseCenter
                     }
                 }
+                .onChange(of: isStaticPoseResetClicked, {
+                    isStaticPoseResetClicked = false
+                    self.cameraManager.resetStaticPosePosition()
+                    staticPosePosition = cameraManager.staticPoseCenter
+                })
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .onAppear {
