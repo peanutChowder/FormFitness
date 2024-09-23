@@ -62,7 +62,6 @@ struct LivePoseView: View {
                     isStaticPoseFollowing: $isStaticPoseFollowing,
                     isStaticPoseLocked: $isStaticPoseLocked,
                     isStaticPoseMirrored: $isStaticPoseMirrored,
-                    poseOverlayOffset: .constant(.zero), // TODO: refactor to replace poseOverlayOffset -> posePosition
                     poseOverlayScale: $staticPoseScale
                 )
                 .onChange(of: isStaticPoseFollowing) {
@@ -82,6 +81,7 @@ struct LivePoseView: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
             .onAppear {
                 cameraManager.setCameraViewSize(cameraViewSize: geometry.size)
+                cameraManager.resetStaticPosePosition()
                 staticPosePosition = cameraManager.staticPoseCenter
             }
         }

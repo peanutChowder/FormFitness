@@ -131,6 +131,7 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     func resetStaticPosePosition() {
+        logger.debug("CameraManager: Resetting static pose position")
         DispatchQueue.main.async {
             self.staticPoseCenter = CGPoint(x: self.cameraViewSize.width / 2, y: self.cameraViewSize.height / 2)
         }

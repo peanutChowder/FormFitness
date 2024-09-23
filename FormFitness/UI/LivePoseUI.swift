@@ -17,7 +17,6 @@ struct SlidingMenu: View {
     @Binding var isStaticPoseFollowing: Bool
     @Binding var isStaticPoseLocked: Bool
     @Binding var isStaticPoseMirrored: Bool
-    @Binding var poseOverlayOffset: CGSize
     @Binding var poseOverlayScale: CGFloat
     
     @State private var isResetButtonSpinning = false
@@ -105,12 +104,13 @@ struct SlidingMenu: View {
                 // animate button
                 withAnimation(.timingCurve(0.37, 0, 0.63, 1, duration: 0.5)) { isResetButtonSpinning = true
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    isResetButtonSpinning = false
-                 }
                 
-                // reset static pose scale & location
-                poseOverlayOffset = .zero
+                // Reset static pose scale & location by triggering LivePoseView onChange handler that calls
+                // cameraManager.resetStaticPosePosition()
+                isStaticPoseLocked.toggle()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    isStaticPoseLocked.toggle()
+                 }
                 poseOverlayScale = 1.0
             })
             .rotationEffect(isResetButtonSpinning ? .degrees(270) : .degrees(0))
