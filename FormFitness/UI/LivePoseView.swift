@@ -32,52 +32,57 @@ struct LivePoseView: View {
     
     var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                cameraView()
-                VStack {
-                    HStack {
-                        ExitButton {
-                            presentationMode.wrappedValue.dismiss()
+            if showRotationPromptView {
+                RotationPromptView(supportedOrientations: getSupportedOrientationsString())
+            } else {
+                ZStack {
+                    cameraView()
+                    SlidingMenu(
+                        isExpanded: $isMenuExpanded,
+                        orientation: orientation,
+                        isStaticPoseFollowing: $isStaticPoseFollowing,
+                        isStaticPoseLocked: $isStaticPoseLocked,
+                        isStaticPoseMirrored: $isStaticPoseMirrored,
+                        poseOverlayScale: $staticPoseScale,
+                        isStaticPoseResetClicked: $isStaticPoseResetClicked
+                    )
+                    .onChange(of: isStaticPoseFollowing) {
+                        logger.info("LivePoseView: isStaticPoseFollowing set to '\(isStaticPoseFollowing)'")
+                        self.cameraManager.setIsStaticPoseFollowing(to: isStaticPoseFollowing)
+                        self.cameraManager.resetStaticPosePosition()
+                        if isStaticPoseFollowing {
+                            staticPosePosition = cameraManager.staticPoseCenter
                         }
-                        .padding(20)
-                        Spacer()
                     }
+                    .onChange(of: isStaticPoseLocked) {
+                        self.cameraManager.resetStaticPosePosition()
+                        if isStaticPoseLocked {
+                            staticPosePosition = cameraManager.staticPoseCenter
+                        }
+                    }
+                    .onChange(of: isStaticPoseResetClicked, {
+                        isStaticPoseResetClicked = false
+                        self.cameraManager.resetStaticPosePosition()
+                        staticPosePosition = cameraManager.staticPoseCenter
+                    })
+                }
+                .frame(width: geometry.size.width, height: geometry.size.height)
+                .onAppear {
+                    cameraManager.setCameraViewSize(cameraViewSize: geometry.size)
+                    cameraManager.resetStaticPosePosition()
+                    staticPosePosition = cameraManager.staticPoseCenter
+                }
+            }
+            
+            VStack {
+                HStack {
+                    ExitButton {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                    .padding(20)
                     Spacer()
                 }
-                SlidingMenu(
-                    isExpanded: $isMenuExpanded,
-                    orientation: orientation,
-                    isStaticPoseFollowing: $isStaticPoseFollowing,
-                    isStaticPoseLocked: $isStaticPoseLocked,
-                    isStaticPoseMirrored: $isStaticPoseMirrored,
-                    poseOverlayScale: $staticPoseScale,
-                    isStaticPoseResetClicked: $isStaticPoseResetClicked
-                )
-                .onChange(of: isStaticPoseFollowing) {
-                    logger.info("LivePoseView: isStaticPoseFollowing set to '\(isStaticPoseFollowing)'")
-                    self.cameraManager.setIsStaticPoseFollowing(to: isStaticPoseFollowing)
-                    self.cameraManager.resetStaticPosePosition()
-                    if isStaticPoseFollowing {
-                        staticPosePosition = cameraManager.staticPoseCenter
-                    }
-                }
-                .onChange(of: isStaticPoseLocked) {
-                    self.cameraManager.resetStaticPosePosition()
-                    if isStaticPoseLocked {
-                        staticPosePosition = cameraManager.staticPoseCenter
-                    }
-                }
-                .onChange(of: isStaticPoseResetClicked, {
-                    isStaticPoseResetClicked = false
-                    self.cameraManager.resetStaticPosePosition()
-                    staticPosePosition = cameraManager.staticPoseCenter
-                })
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
-            .onAppear {
-                cameraManager.setCameraViewSize(cameraViewSize: geometry.size)
-                cameraManager.resetStaticPosePosition()
-                staticPosePosition = cameraManager.staticPoseCenter
+                Spacer()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
@@ -106,72 +111,81 @@ struct LivePoseView: View {
         }
     }
     
+    private func getSupportedOrientationsString() -> [String] {
+        var supportedOrientationsStr: [String] = []
+        let landscapeOrientations: Set<UIDeviceOrientation> = [.landscapeRight, .landscapeLeft]
+        if landscapeOrientations.isSubset(of: exercise.supportedOrientations) {
+            supportedOrientationsStr.append("landscape")
+        }
+        if exercise.supportedOrientations.contains(.portrait) {
+            supportedOrientationsStr.append("portrait")
+        }
+        
+        return supportedOrientationsStr
+    }
+    
     private func cameraView() -> some View {
         ZStack {
-            if showRotationPromptView {
-                RotationPromptView()
-            } else {
-                GeometryReader { geometry in
-                    ZStack {
-                        if let currentFrame = cameraManager.liveTrackingFrame {
-                            Image(uiImage: currentFrame)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .edgesIgnoringSafeArea(.all)
-                        } else {
-                            CameraView(session: cameraManager.session)
-                                .edgesIgnoringSafeArea(.all)
-                        }
-                        if let staticPose = cameraManager.staticPose {
-                            Image(uiImage: staticPose)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .edgesIgnoringSafeArea(.all)
-                                .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
-                                .scaleEffect(staticPoseScale)
-                                .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
-                                .gesture(
-                                    DragGesture()
-                                        .updating($fingerLocation) { value, fingerLocation, _ in
-                                            fingerLocation = value.location
+            GeometryReader { geometry in
+                ZStack {
+                    if let currentFrame = cameraManager.liveTrackingFrame {
+                        Image(uiImage: currentFrame)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                    } else {
+                        CameraView(session: cameraManager.session)
+                            .edgesIgnoringSafeArea(.all)
+                    }
+                    if let staticPose = cameraManager.staticPose {
+                        Image(uiImage: staticPose)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                            .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
+                            .scaleEffect(staticPoseScale)
+                            .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
+                            .gesture(
+                                DragGesture()
+                                    .updating($fingerLocation) { value, fingerLocation, _ in
+                                        fingerLocation = value.location
+                                    }
+                                    .updating($startLocation) { value, startLocation, _ in
+                                        if startLocation == nil {
+                                            startLocation = staticPosePosition
                                         }
-                                        .updating($startLocation) { value, startLocation, _ in
-                                            if startLocation == nil {
-                                                startLocation = staticPosePosition
+                                    }
+                                    .onChanged { value in
+                                        if !isStaticPoseLocked && !isStaticPoseFollowing {
+                                            if lastDragPosition == nil {
+                                                lastDragPosition = value.startLocation
                                             }
+                                            let translation = CGPoint(
+                                                x: value.location.x - (lastDragPosition?.x ?? 0),
+                                                y: value.location.y - (lastDragPosition?.y ?? 0)
+                                            )
+                                            staticPosePosition = CGPoint(
+                                                x: staticPosePosition.x + (isStaticPoseMirrored ? -translation.x : translation.x),
+                                                y: staticPosePosition.y + translation.y
+                                            )
+                                            lastDragPosition = value.location
                                         }
-                                        .onChanged { value in
-                                            if !isStaticPoseLocked && !isStaticPoseFollowing {
-                                                if lastDragPosition == nil {
-                                                    lastDragPosition = value.startLocation
-                                                }
-                                                let translation = CGPoint(
-                                                    x: value.location.x - (lastDragPosition?.x ?? 0),
-                                                    y: value.location.y - (lastDragPosition?.y ?? 0)
-                                                )
-                                                staticPosePosition = CGPoint(
-                                                    x: staticPosePosition.x + (isStaticPoseMirrored ? -translation.x : translation.x),
-                                                    y: staticPosePosition.y + translation.y
-                                                )
-                                                lastDragPosition = value.location
-                                            }
+                                    }
+                                    .onEnded { _ in
+                                        lastDragPosition = nil
+                                    }
+                            )
+                            .gesture(
+                                MagnificationGesture()
+                                    .onChanged { value in
+                                        if !isStaticPoseLocked {
+                                            staticPoseScale = value
                                         }
-                                        .onEnded { _ in
-                                            lastDragPosition = nil
-                                        }
-                                )
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            if !isStaticPoseLocked {
-                                                staticPoseScale = value
-                                            }
-                                        }
-                                )
-                                .onAppear() {
-                                    staticPosePosition = cameraManager.staticPoseCenter
-                                }
-                        }
+                                    }
+                            )
+                            .onAppear() {
+                                staticPosePosition = cameraManager.staticPoseCenter
+                            }
                     }
                 }
             }
@@ -180,16 +194,19 @@ struct LivePoseView: View {
 }
 
 struct RotationPromptView: View {
+    let supportedOrientations: [String]
     var body: some View {
         VStack {
             Image(systemName: "rotate.3d")
                 .font(.system(size: 50))
                 .padding()
-            Text("Prop your phone up in portrait or landscape")
+            Text("Prop your phone up in \(supportedOrientations.joined(separator: " or ")).")
                 .font(.headline)
                 .multilineTextAlignment(.center)
                 .padding()
         }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
