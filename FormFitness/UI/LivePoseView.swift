@@ -9,21 +9,8 @@ import SwiftUI
 import AVFoundation
 import Vision
 
-struct DeviceRotationViewModifier: ViewModifier {
-    let action: (UIDeviceOrientation) -> Void
-    
-    func body(content: Content) -> some View {
-        content
-            .onAppear()
-            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                action(UIDevice.current.orientation)
-            }
-    }
-}
-
-
 struct LivePoseView: View {
-    var exerciseImg: String
+    var exercise: Exercise
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var cameraManager = CameraManager()
     @State private var orientation = UIDeviceOrientation.unknown
@@ -93,20 +80,29 @@ struct LivePoseView: View {
                 staticPosePosition = cameraManager.staticPoseCenter
             }
         }
-        .modifier(DeviceRotationViewModifier { newOrientation in
-            orientation = newOrientation
-            showRotationPromptView = switch newOrientation {
-            case .portrait, .landscapeLeft, .landscapeRight:
-                false
-            default:
-                true
+        .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
+            let newOrientation = UIDevice.current.orientation
+            if newOrientation != orientation {
+                orientation = newOrientation
+                logger.error("orientation changed")
+                
+                if exercise.supportedOrientations.contains(orientation) {
+                    showRotationPromptView = false
+                } else {
+                    showRotationPromptView = true
+                }
             }
-            logger.debug("LivePoseView: Orientation changed: \(newOrientation.rawValue), showRotationPromptView: \(showRotationPromptView)")
-        })
+        }
         .onAppear {
             orientation = UIDevice.current.orientation
-            PerfectFormManager.shared.loadStaticForm(exerciseImg: exerciseImg)
-            cameraManager.changePerfectFormPose(to: exerciseImg)
+            PerfectFormManager.shared.loadStaticForm(exerciseImg: exercise.imageName)
+            cameraManager.changePerfectFormPose(to: exercise.imageName)
+            
+            if exercise.supportedOrientations.contains(orientation) {
+                showRotationPromptView = false
+            } else {
+                showRotationPromptView = true
+            }
         }
     }
     

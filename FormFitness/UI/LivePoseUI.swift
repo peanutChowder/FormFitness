@@ -103,8 +103,6 @@ struct SlidingMenu: View {
         Group {
             // Button for resetting pose scaling + translations
             menuButton(icon: "arrow.clockwise", action: {
-                // Reset static pose scale & location by triggering LivePoseView onChange handler that calls
-                // cameraManager.resetStaticPosePosition()
                 isStaticPoseResetClicked = true
                 poseOverlayScale = 1.0
             })
