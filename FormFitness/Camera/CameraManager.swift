@@ -16,6 +16,9 @@ class CameraManager: NSObject, ObservableObject {
     private var pixelBufferSize: CGSize = .zero
     private var isStaticPoseFollowing = false;
     
+    private let livePoseColor: CGColor = CGColor(red: 66/255, green: 245/255, blue: 218/255, alpha: 1)
+    private let staticPoseColor: CGColor = CGColor(red: 245/255, green: 66/255, blue: 218/255, alpha: 1)
+    
     override init() {
         super.init()
         setupSession()
@@ -90,7 +93,7 @@ class CameraManager: NSObject, ObservableObject {
         context.fill(CGRect(origin: .zero, size: self.pixelBufferSize))
         
         // Draw static pose
-        poseDetector.drawStaticPose(context: context, perfectFormPose: pose, imageSize: self.pixelBufferSize)
+        poseDetector.drawStaticPose(context: context, perfectFormPose: pose, imageSize: self.pixelBufferSize, poseColor: staticPoseColor)
         
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -161,7 +164,7 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         if let livePose = poseDetector.detectPose(in: pixelBuffer),
            let staticPose = PerfectFormManager.shared.perfectForms[currentPose]?.pose {
-            poseDetector.drawLivePose(pose: livePose, context: context, imageSize: currPixelBufferSize)
+            poseDetector.drawLivePose(pose: livePose, context: context, imageSize: currPixelBufferSize, poseColor: livePoseColor)
             
             
             if isStaticPoseFollowing {
