@@ -9,8 +9,6 @@ class CameraManager: NSObject, ObservableObject {
     @Published var staticPose: UIImage?
     @Published var staticPoseCenter: CGPoint = .zero
     private var cameraViewSize: CGSize = .zero
-    private let movementScaleFactor: CGFloat = 0.5 // Adjust this value to control movement sensitivity
-
     private let poseDetector = PoseDetector()
     private var currentPose: String = ""
     private var pixelBufferSize: CGSize = .zero
