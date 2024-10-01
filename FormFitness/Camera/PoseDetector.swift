@@ -9,6 +9,24 @@ import UIKit
 import Vision
 
 class PoseDetector {
+    private let livePoseWidth = 7.0
+    private let staticPoseWidth = 10.0
+    private struct PoseColors {
+        // live pose colors
+        static let livePoseLimb: CGColor = CGColor(red: 66/255, green: 245/255, blue: 123/255, alpha: 1)
+        static let livePoseHead: CGColor = CGColor(red: 250/255, green: 182/255, blue: 245/255, alpha: 1)
+        static let livePoseHands: CGColor = CGColor(red: 220/255, green: 182/255, blue: 245/255, alpha: 1)
+        static let livePoseFeet: CGColor = CGColor(red: 180/255, green: 182/255, blue: 245/255, alpha: 1)
+        
+        // static pose colors
+        static let staticPoseLimb: CGColor = CGColor(red: 66/255, green: 182/255, blue: 245/255, alpha: 1)
+        static let staticPoseHead: CGColor = CGColor(red: 250/255, green: 182/255, blue: 245/255, alpha: 1)
+        static let staticPoseHands: CGColor = CGColor(red: 220/255, green: 182/255, blue: 245/255, alpha: 1)
+        static let staticPoseFeet: CGColor = CGColor(red: 180/255, green: 182/255, blue: 245/255, alpha: 1)
+        
+    }
+    
+    
     func detectPose(in pixelBuffer: CVPixelBuffer, orientation: CGImagePropertyOrientation = .up) -> VNHumanBodyPoseObservation? {
         let request = VNDetectHumanBodyPoseRequest()
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: orientation, options: [:])
@@ -22,19 +40,33 @@ class PoseDetector {
         }
     }
     
-    func drawStaticPose(context: CGContext, perfectFormPose: VNHumanBodyPoseObservation? = nil, imageSize: CGSize, poseColor: CGColor) {
+    func drawStaticPose(context: CGContext, perfectFormPose: VNHumanBodyPoseObservation? = nil, imageSize: CGSize) {
         // Draw perfect form pose lines
         if let perfectFormPose = perfectFormPose {
-            context.setStrokeColor(poseColor)
-            context.setLineWidth(10.0)
-            drawPoseOverlay(pose: perfectFormPose, on: context, imageSize: imageSize)
+            context.setStrokeColor(PoseColors.staticPoseLimb)
+            context.setLineWidth(staticPoseWidth)
+            drawPoseOverlay(
+                pose: perfectFormPose,
+                on: context,
+                imageSize: imageSize,
+                headColor: PoseColors.staticPoseHead,
+                handColor: PoseColors.staticPoseHands,
+                feetColor: PoseColors.staticPoseFeet
+            )
         }
     }
     
-    func drawLivePose(pose: VNHumanBodyPoseObservation, context: CGContext, imageSize: CGSize, poseColor: CGColor) {
-        context.setStrokeColor(poseColor)
-        context.setLineWidth(3.0)
-        drawPoseOverlay(pose: pose, on: context, imageSize: imageSize)
+    func drawLivePose(pose: VNHumanBodyPoseObservation, context: CGContext, imageSize: CGSize) {
+        context.setStrokeColor(PoseColors.livePoseLimb)
+        context.setLineWidth(livePoseWidth)
+        drawPoseOverlay(
+            pose: pose,
+            on: context,
+            imageSize: imageSize,
+            headColor: PoseColors.livePoseHead,
+            handColor: PoseColors.livePoseHands,
+            feetColor: PoseColors.livePoseFeet
+        )
     }
     
     func getJointCoordinateFromContext(joint: VNHumanBodyPoseObservation.JointName,
@@ -52,7 +84,7 @@ class PoseDetector {
         return CGPoint(x: x, y: y)
     }
     
-    private func drawPoseOverlay(pose: VNHumanBodyPoseObservation, on context: CGContext, imageSize: CGSize) {
+    private func drawPoseOverlay(pose: VNHumanBodyPoseObservation, on context: CGContext, imageSize: CGSize, headColor: CGColor, handColor: CGColor, feetColor: CGColor) {
         let connections: [(VNHumanBodyPoseObservation.JointName, VNHumanBodyPoseObservation.JointName)] = [
             (.nose, .neck),
             (.neck, .leftShoulder),
@@ -75,10 +107,6 @@ class PoseDetector {
             drawLine(from: start, to: end, in: pose, on: context, size: imageSize)
         }
         
-        // Draw pose circle indicators for head, hands, and feet
-        let headColor = CGColor(red: 3/255, green: 240/255, blue: 252/255, alpha: 1)
-        let handColor = CGColor(red: 3/255, green: 180/255, blue: 252/255, alpha: 1)
-        let feetColor = CGColor(red: 3/255, green: 140/255, blue: 252/255, alpha: 1)
         drawJointIndicator(for: .nose, in: pose, on: context, size: imageSize, jointIndicatorRadius: 40, color: headColor)
         drawJointIndicator(for: .rightWrist, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: handColor)
         drawJointIndicator(for: .leftWrist, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: handColor)
