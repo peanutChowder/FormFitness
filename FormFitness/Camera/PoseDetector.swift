@@ -37,34 +37,6 @@ class PoseDetector {
         drawPoseOverlay(pose: pose, on: context, imageSize: imageSize)
     }
     
-    func drawPoseFrame(pose: VNHumanBodyPoseObservation, on image: CVPixelBuffer, perfectFormPose: VNHumanBodyPoseObservation? = nil) -> UIImage? {
-        let imageSize = CGSize(width: CVPixelBufferGetWidth(image), height: CVPixelBufferGetHeight(image))
-        
-        UIGraphicsBeginImageContextWithOptions(imageSize, false, 1.0)
-        guard let context = UIGraphicsGetCurrentContext() else { return nil }
-        
-        // Draw the original image
-        let ciImage = CIImage(cvPixelBuffer: image)
-        let uiImage = UIImage(ciImage: ciImage)
-        uiImage.draw(in: CGRect(origin: .zero, size: imageSize))
-        
-        // Draw live pose lines
-        context.setStrokeColor(UIColor.green.cgColor)
-        context.setLineWidth(3.0)
-        drawPoseOverlay(pose: pose, on: context, imageSize: imageSize)
-        
-        // Draw perfect form pose lines
-        if let perfectFormPose = perfectFormPose {
-            context.setStrokeColor(UIColor.blue.cgColor)
-            context.setLineWidth(10.0)
-            drawPoseOverlay(pose: perfectFormPose, on: context, imageSize: imageSize)
-        }
-        
-        let result = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return result
-    }
-    
     func getJointCoordinateFromContext(joint: VNHumanBodyPoseObservation.JointName,
                        pose: VNHumanBodyPoseObservation,
                        context: CGContext,
