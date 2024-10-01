@@ -169,7 +169,7 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
                 if liveJointAbsoluteCoords != .zero {
                     if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: .rightWrist) {
                         
-                        let staticPoseAdjustedX = liveJointAbsoluteCoords.x + normalizedHandOffset.x * cameraViewSize.width
+                        let staticPoseAdjustedX = liveJointAbsoluteCoords.x - normalizedHandOffset.x * cameraViewSize.width
                         let staticPoseAdjustedY = liveJointAbsoluteCoords.y + normalizedHandOffset.y * cameraViewSize.height
                         DispatchQueue.main.async {
                             self.staticPoseCenter = CGPoint(x: staticPoseAdjustedX, y: staticPoseAdjustedY)
