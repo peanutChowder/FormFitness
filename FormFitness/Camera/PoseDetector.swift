@@ -69,6 +69,37 @@ class PoseDetector {
         )
     }
     
+    #warning("experimental")
+    func drawLivePoseColorRating(pose: VNHumanBodyPoseObservation, staticPose: VNHumanBodyPoseObservation, context: CGContext, imageSize: CGSize) {
+            let connections: [(VNHumanBodyPoseObservation.JointName, VNHumanBodyPoseObservation.JointName)] = [
+                (.nose, .neck),
+                (.neck, .leftShoulder),
+                (.neck, .rightShoulder),
+                (.leftShoulder, .leftElbow),
+                (.leftElbow, .leftWrist),
+                (.rightShoulder, .rightElbow),
+                (.rightElbow, .rightWrist),
+                (.neck, .root),
+                (.root, .leftHip),
+                (.root, .rightHip),
+                (.leftHip, .leftKnee),
+                (.leftKnee, .leftAnkle),
+                (.rightHip, .rightKnee),
+                (.rightKnee, .rightAnkle)
+            ]
+            
+            for (start, end) in connections {
+                drawLineColorRating(from: start, to: end, in: pose, staticPose: staticPose, on: context, size: imageSize)
+            }
+            
+            // Draw joint indicators
+            let joints: [VNHumanBodyPoseObservation.JointName] = [.nose, .neck, .leftShoulder, .rightShoulder, .leftElbow, .rightElbow, .leftWrist, .rightWrist, .root, .leftHip, .rightHip, .leftKnee, .rightKnee, .leftAnkle, .rightAnkle]
+            
+            for joint in joints {
+                drawJointIndicatorColorRating(for: joint, in: pose, staticPose: staticPose, on: context, size: imageSize, jointIndicatorRadius: 5)
+            }
+        }
+    
     func getJointCoordinateFromContext(joint: VNHumanBodyPoseObservation.JointName,
                        pose: VNHumanBodyPoseObservation,
                        context: CGContext,
@@ -114,6 +145,29 @@ class PoseDetector {
         drawJointIndicator(for: .rightAnkle, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: feetColor)
     }
     
+    #warning("Experimental")
+    private func drawJointIndicatorColorRating(for joint: VNHumanBodyPoseObservation.JointName,
+                                     in pose: VNHumanBodyPoseObservation,
+                                     staticPose: VNHumanBodyPoseObservation,
+                                     on context: CGContext,
+                                     size: CGSize,
+                                     jointIndicatorRadius: CGFloat) {
+         guard let point = try? pose.recognizedPoint(joint),
+               point.confidence > 0.1 else {
+             return
+         }
+         
+         let x = point.location.x * size.width
+         let y = (1 - point.location.y) * size.height
+         
+         let matchPercentage = jointMatchPercentage(joint: joint, in: pose, with: staticPose)
+         let color = colorForMatchPercentage(matchPercentage)
+         
+         context.setFillColor(color.cgColor)
+         context.addArc(center: CGPoint(x: x, y: y), radius: jointIndicatorRadius, startAngle: 0, endAngle: CGFloat.pi * 2, clockwise: true)
+         context.fillPath()
+     }
+    
     private func drawJointIndicator(for joint: VNHumanBodyPoseObservation.JointName,
                                     in pose: VNHumanBodyPoseObservation,
                                     on context: CGContext,
@@ -137,6 +191,106 @@ class PoseDetector {
         context.setFillColor(UIColor.systemPink.cgColor)
         context.addArc(center: CGPoint(x: 0, y: 0), radius: 60, startAngle: 0, endAngle: CGFloat.pi * 2, clockwise: true)
         context.fillPath()
+    }
+    
+    #warning("experimental")
+    private func jointMatchPercentage(joint: VNHumanBodyPoseObservation.JointName, in pose: VNHumanBodyPoseObservation, with staticPose: VNHumanBodyPoseObservation) -> CGFloat {
+        guard let posePoint = try? pose.recognizedPoint(joint),
+              let modelPoint = try? staticPose.recognizedPoint(joint),
+              posePoint.confidence > 0.1 && modelPoint.confidence > 0.1 else {
+            return 0
+        }
+        
+        let maxDistance: CGFloat = 0.5 // Maximum distance for 0% match
+        let distance = hypot(posePoint.location.x - modelPoint.location.x, posePoint.location.y - modelPoint.location.y)
+        
+        let matchPercentage = 1 - (distance / maxDistance)
+        return max(0, min(1, matchPercentage)) // Clamp between 0 and 1
+    }
+    
+    #warning("experimental")
+    private func colorForMatchPercentage(_ percentage: CGFloat) -> UIColor {
+        let red: CGFloat
+        let green: CGFloat
+        
+        if percentage <= 0.5 {
+            // Gradient from red to yellow
+            red = 1.0
+            green = percentage * 2
+        } else {
+            // Gradient from yellow to green
+            red = 2.0 - (percentage * 2)
+            green = 1.0
+        }
+        
+        return UIColor(red: red, green: green, blue: 0, alpha: 1)
+    }
+    
+    #warning("experimental")
+    private func drawLineColorRating(from startJoint: VNHumanBodyPoseObservation.JointName,
+                          to endJoint: VNHumanBodyPoseObservation.JointName,
+                          in pose: VNHumanBodyPoseObservation,
+                          staticPose: VNHumanBodyPoseObservation,
+                          on context: CGContext,
+                          size: CGSize) {
+        guard let startPoint = try? pose.recognizedPoint(startJoint),
+              let endPoint = try? pose.recognizedPoint(endJoint),
+              startPoint.confidence > 0.1 && endPoint.confidence > 0.1 else {
+            return
+        }
+        
+        let startX = startPoint.location.x * size.width
+        let startY = (1 - startPoint.location.y) * size.height
+        let endX = endPoint.location.x * size.width
+        let endY = (1 - endPoint.location.y) * size.height
+        
+        let startMatchPercentage = jointMatchPercentage(joint: startJoint, in: pose, with: staticPose)
+        let endMatchPercentage = jointMatchPercentage(joint: endJoint, in: pose, with: staticPose)
+        
+        let startColor = colorForMatchPercentage(startMatchPercentage)
+        let endColor = colorForMatchPercentage(endMatchPercentage)
+        
+        drawGradientLine(from: CGPoint(x: startX, y: startY),
+                         to: CGPoint(x: endX, y: endY),
+                         startColor: startColor,
+                         endColor: endColor,
+                         in: context)
+    }
+    
+    private func drawGradientLine(from startPoint: CGPoint,
+                                  to endPoint: CGPoint,
+                                  startColor: UIColor,
+                                  endColor: UIColor,
+                                  in context: CGContext) {
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let startColorComponents = startColor.cgColor.components ?? [0, 0, 0, 1]
+        let endColorComponents = endColor.cgColor.components ?? [0, 0, 0, 1]
+        
+        let colorComponents: [CGFloat] = startColorComponents + endColorComponents
+        let locations: [CGFloat] = [0.0, 1.0]
+        
+        guard let gradient = CGGradient(colorSpace: colorSpace,
+                                        colorComponents: colorComponents,
+                                        locations: locations,
+                                        count: 2) else {
+            return
+        }
+        
+        context.saveGState()
+        context.setLineWidth(livePoseWidth)
+        context.setLineCap(.round)
+        
+        context.move(to: startPoint)
+        context.addLine(to: endPoint)
+        context.replacePathWithStrokedPath()
+        context.clip()
+        
+        context.drawLinearGradient(gradient,
+                                   start: startPoint,
+                                   end: endPoint,
+                                   options: [])
+        
+        context.restoreGState()
     }
     
     private func drawLine(from startPoint: VNHumanBodyPoseObservation.JointName,
