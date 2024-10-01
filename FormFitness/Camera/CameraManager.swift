@@ -13,6 +13,7 @@ class CameraManager: NSObject, ObservableObject {
     private var currentPose: String = ""
     private var pixelBufferSize: CGSize = .zero
     private var isStaticPoseFollowing = false;
+    private var poseFollowJoint: VNHumanBodyPoseObservation.JointName = .rightWrist
     
     override init() {
         super.init()
@@ -163,11 +164,11 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             
             if isStaticPoseFollowing {
-                let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: .rightAnkle, pose: livePose, context: context, size: cameraViewSize)
+                let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: poseFollowJoint, pose: livePose, context: context, size: cameraViewSize)
                 
                 
                 if liveJointAbsoluteCoords != .zero {
-                    if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: .rightWrist) {
+                    if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: poseFollowJoint) {
                         
                         let staticPoseAdjustedX = liveJointAbsoluteCoords.x - normalizedHandOffset.x * cameraViewSize.width
                         let staticPoseAdjustedY = liveJointAbsoluteCoords.y + normalizedHandOffset.y * cameraViewSize.height
