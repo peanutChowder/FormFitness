@@ -8,10 +8,13 @@ class CameraManager: NSObject, ObservableObject {
     @Published var liveTrackingFrame: UIImage?
     @Published var staticPose: UIImage?
     @Published var staticPoseCenter: CGPoint = .zero
-    private var cameraViewSize: CGSize = .zero
+    
     private let poseDetector = PoseDetector()
     private var currentPose: String = ""
+    
+    private var cameraViewSize: CGSize = .zero
     private var pixelBufferSize: CGSize = .zero
+
     private var isStaticPoseFollowing = false;
     private var poseFollowJoint: VNHumanBodyPoseObservation.JointName = .rightWrist
     
@@ -164,14 +167,15 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
             
             
             if isStaticPoseFollowing {
-                let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: poseFollowJoint, pose: livePose, context: context, size: cameraViewSize)
+                let screenSize = UIScreen.main.bounds.size
+                let liveJointAbsoluteCoords = self.poseDetector.getJointCoordinateFromContext(joint: poseFollowJoint, pose: livePose, context: context, size: screenSize)
                 
                 
                 if liveJointAbsoluteCoords != .zero {
                     if let normalizedHandOffset = poseDetector.calcNormalizedStaticJointOffset(staticPose: staticPose, joint: poseFollowJoint) {
                         
-                        let staticPoseAdjustedX = liveJointAbsoluteCoords.x - normalizedHandOffset.x * cameraViewSize.width
-                        let staticPoseAdjustedY = liveJointAbsoluteCoords.y + normalizedHandOffset.y * cameraViewSize.height
+                        let staticPoseAdjustedX = liveJointAbsoluteCoords.x - normalizedHandOffset.x * screenSize.width
+                        let staticPoseAdjustedY = liveJointAbsoluteCoords.y + normalizedHandOffset.y * screenSize.height
                         DispatchQueue.main.async {
                             self.staticPoseCenter = CGPoint(x: staticPoseAdjustedX, y: staticPoseAdjustedY)
                         }

@@ -138,54 +138,58 @@ struct LivePoseView: View {
                             .edgesIgnoringSafeArea(.all)
                     }
                     if let staticPose = cameraManager.staticPose {
-                        Image(uiImage: staticPose)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .edgesIgnoringSafeArea(.all)
-                            .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
-                            .scaleEffect(staticPoseScale)
-                            .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
-                            .gesture(
-                                DragGesture()
-                                    .updating($fingerLocation) { value, fingerLocation, _ in
-                                        fingerLocation = value.location
-                                    }
-                                    .updating($startLocation) { value, startLocation, _ in
-                                        if startLocation == nil {
-                                            startLocation = staticPosePosition
+                        GeometryReader {
+                            geometry in
+                            Image(uiImage: staticPose)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .edgesIgnoringSafeArea(.all)
+                                .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
+                                .scaleEffect(staticPoseScale)
+                                .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
+                                .gesture(
+                                    DragGesture()
+                                        .updating($fingerLocation) { value, fingerLocation, _ in
+                                            fingerLocation = value.location
                                         }
-                                    }
-                                    .onChanged { value in
-                                        if !isStaticPoseLocked && !isStaticPoseFollowing {
-                                            if lastDragPosition == nil {
-                                                lastDragPosition = value.startLocation
+                                        .updating($startLocation) { value, startLocation, _ in
+                                            if startLocation == nil {
+                                                startLocation = staticPosePosition
                                             }
-                                            let translation = CGPoint(
-                                                x: value.location.x - (lastDragPosition?.x ?? 0),
-                                                y: value.location.y - (lastDragPosition?.y ?? 0)
-                                            )
-                                            staticPosePosition = CGPoint(
-                                                x: staticPosePosition.x + (isStaticPoseMirrored ? -translation.x : translation.x),
-                                                y: staticPosePosition.y + translation.y
-                                            )
-                                            lastDragPosition = value.location
                                         }
-                                    }
-                                    .onEnded { _ in
-                                        lastDragPosition = nil
-                                    }
-                            )
-                            .gesture(
-                                MagnificationGesture()
-                                    .onChanged { value in
-                                        if !isStaticPoseLocked {
-                                            staticPoseScale = value
+                                        .onChanged { value in
+                                            if !isStaticPoseLocked && !isStaticPoseFollowing {
+                                                if lastDragPosition == nil {
+                                                    lastDragPosition = value.startLocation
+                                                }
+                                                let translation = CGPoint(
+                                                    x: value.location.x - (lastDragPosition?.x ?? 0),
+                                                    y: value.location.y - (lastDragPosition?.y ?? 0)
+                                                )
+                                                staticPosePosition = CGPoint(
+                                                    x: staticPosePosition.x + (isStaticPoseMirrored ? -translation.x : translation.x),
+                                                    y: staticPosePosition.y + translation.y
+                                                )
+                                                lastDragPosition = value.location
+                                            }
                                         }
-                                    }
-                            )
-                            .onAppear() {
-                                staticPosePosition = cameraManager.staticPoseCenter
-                            }
+                                        .onEnded { _ in
+                                            lastDragPosition = nil
+                                        }
+                                )
+                                .gesture(
+                                    MagnificationGesture()
+                                        .onChanged { value in
+                                            if !isStaticPoseLocked {
+                                                staticPoseScale = value
+                                            }
+                                        }
+                                )
+                                .onAppear() {
+                                    staticPosePosition = cameraManager.staticPoseCenter
+                                }
+                        }
+
                     }
                 }
             }
