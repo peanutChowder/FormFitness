@@ -163,7 +163,7 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         if let livePose = poseDetector.detectPose(in: pixelBuffer),
            let staticPose = PerfectFormManager.shared.perfectForms[currentPose]?.pose {
-            poseDetector.drawLivePoseColorRating(pose: livePose, staticPose: staticPose, context: context, imageSize: currPixelBufferSize)
+            poseDetector.drawLivePoseColorRating(pose: livePose, staticPose: staticPose, context: context, imageSize: currPixelBufferSize, staticPoseCenter: staticPoseCenter)
             
             
             if isStaticPoseFollowing {
