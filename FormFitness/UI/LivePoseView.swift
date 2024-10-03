@@ -40,7 +40,8 @@ struct LivePoseView: View {
             } else {
                 // Show user pose overlay view
                 ZStack {
-                    cameraView()
+                    cameraLivePoseView()
+                    staticPoseView()
                     SlidingMenu(
                         isExpanded: $isMenuExpanded,
                         orientation: orientation,
@@ -128,7 +129,7 @@ struct LivePoseView: View {
         return supportedOrientationsStr
     }
     
-    private func cameraView() -> some View {
+    private func cameraLivePoseView() -> some View {
         ZStack {
             GeometryReader { geometry in
                 ZStack {
@@ -141,61 +142,66 @@ struct LivePoseView: View {
                         CameraView(session: cameraManager.session)
                             .edgesIgnoringSafeArea(.all)
                     }
-                    if let staticPose = cameraManager.staticPose {
-                        GeometryReader {
-                            geometry in
-                            Image(uiImage: staticPose)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .edgesIgnoringSafeArea(.all)
-                                .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
-                                .scaleEffect(staticPoseScale)
-                                .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
-                                .gesture(
-                                    DragGesture()
-                                        .updating($fingerLocation) { value, fingerLocation, _ in
-                                            fingerLocation = value.location
-                                        }
-                                        .updating($startLocation) { value, startLocation, _ in
-                                            if startLocation == nil {
-                                                startLocation = staticPosePosition
-                                            }
-                                        }
-                                        .onChanged { value in
-                                            if !isStaticPoseLocked && !isStaticPoseFollowing {
-                                                if lastDragPosition == nil {
-                                                    lastDragPosition = value.startLocation
-                                                }
-                                                let translation = CGPoint(
-                                                    x: value.location.x - (lastDragPosition?.x ?? 0),
-                                                    y: value.location.y - (lastDragPosition?.y ?? 0)
-                                                )
-                                                staticPosePosition = CGPoint(
-                                                    x: staticPosePosition.x + (isStaticPoseMirrored ? -translation.x : translation.x),
-                                                    y: staticPosePosition.y + translation.y
-                                                )
-                                                lastDragPosition = value.location
-                                            }
-                                        }
-                                        .onEnded { _ in
-                                            lastDragPosition = nil
-                                        }
-                                )
-                                .gesture(
-                                    MagnificationGesture()
-                                        .onChanged { value in
-                                            if !isStaticPoseLocked {
-                                                staticPoseScale = value
-                                            }
-                                        }
-                                )
-                                .onAppear() {
-                                    staticPosePosition = cameraManager.staticPoseCenter
-                                }
-                        }
-
-                    }
                 }
+            }
+        }
+    }
+    
+    private func staticPoseView() -> some View {
+        ZStack {
+            if let staticPose = cameraManager.staticPose {
+                GeometryReader {
+                    geometry in
+                    Image(uiImage: staticPose)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .edgesIgnoringSafeArea(.all)
+                        .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
+                        .scaleEffect(staticPoseScale)
+                        .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
+                        .gesture(
+                            DragGesture()
+                                .updating($fingerLocation) { value, fingerLocation, _ in
+                                    fingerLocation = value.location
+                                }
+                                .updating($startLocation) { value, startLocation, _ in
+                                    if startLocation == nil {
+                                        startLocation = staticPosePosition
+                                    }
+                                }
+                                .onChanged { value in
+                                    if !isStaticPoseLocked && !isStaticPoseFollowing {
+                                        if lastDragPosition == nil {
+                                            lastDragPosition = value.startLocation
+                                        }
+                                        let translation = CGPoint(
+                                            x: value.location.x - (lastDragPosition?.x ?? 0),
+                                            y: value.location.y - (lastDragPosition?.y ?? 0)
+                                        )
+                                        staticPosePosition = CGPoint(
+                                            x: staticPosePosition.x + (isStaticPoseMirrored ? -translation.x : translation.x),
+                                            y: staticPosePosition.y + translation.y
+                                        )
+                                        lastDragPosition = value.location
+                                    }
+                                }
+                                .onEnded { _ in
+                                    lastDragPosition = nil
+                                }
+                        )
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    if !isStaticPoseLocked {
+                                        staticPoseScale = value
+                                    }
+                                }
+                        )
+                        .onAppear() {
+                            staticPosePosition = cameraManager.staticPoseCenter
+                        }
+                }
+
             }
         }
     }
