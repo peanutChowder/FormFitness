@@ -32,6 +32,8 @@ struct LivePoseView: View {
     @State private var isMenuExpanded = false
     @State private var isStaticPoseResetClicked = false
     
+    @State private var showReferenceImg = true
+    
     var body: some View {
         GeometryReader { geometry in
             // Show user with prompt to rotate device to a supported orientation
@@ -41,7 +43,20 @@ struct LivePoseView: View {
                 // Show user pose overlay view
                 ZStack {
                     cameraLivePoseView()
+                    
+                    if showReferenceImg, let referenceImg = PerfectFormManager.shared.perfectForms[exercise.imageName]?.image {
+                        Image(uiImage: referenceImg)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .edgesIgnoringSafeArea(.all)
+                            .opacity(0.6)
+                            .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
+                            .scaleEffect(staticPoseScale)
+                            .scaleEffect(x: isStaticPoseMirrored ? -1 : 1, y: 1, anchor: .center)
+                    }
+                    
                     staticPoseView()
+                    
                     SlidingMenu(
                         isExpanded: $isMenuExpanded,
                         orientation: orientation,
