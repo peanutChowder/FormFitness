@@ -23,12 +23,28 @@ struct SlidingMenu: View {
     
     @State private var isResetButtonSpinning = false
     
+    // attributes for flashing description of clicked button
+    @State private var flashMessage: String?
+    @State private var isShowingFlash = false
+    @State private var messageTimer: Timer?
+    
     var body: some View {
-        Group {
-            if orientation.isPortrait {
-                bottomSlidingMenu
-            } else if orientation.isLandscape {
-                sideSlidingMenu
+        ZStack {
+            Group {
+                if orientation.isPortrait {
+                    bottomSlidingMenu
+                } else if orientation.isLandscape {
+                    sideSlidingMenu
+                }
+            }
+            
+            if isShowingFlash, let message = flashMessage {
+                Text(message)
+                    .padding()
+                    .background(Color.black.opacity(0.7))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .transition(.opacity)
             }
         }
     }
@@ -58,6 +74,24 @@ struct SlidingMenu: View {
                 }
             }
             .edgesIgnoringSafeArea(.trailing)
+        }
+    }
+    
+    private func showFlashMessage(_ message: String) {
+        // Cancel existing timers to prevent spam
+        messageTimer?.invalidate()
+        
+        // Update the message and show it
+        flashMessage = message
+        withAnimation {
+            isShowingFlash = true
+        }
+        
+        // Set a new timer
+        messageTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { _ in
+            withAnimation {
+                self.isShowingFlash = false
+            }
         }
     }
     
@@ -115,16 +149,24 @@ struct SlidingMenu: View {
             menuButton(icon: "arrow.clockwise", action: {
                 isStaticPoseResetClicked = true
                 poseOverlayScale = 1.0
+                showFlashMessage("Reset pose")
+                
             })
             
             // Button to toggle which way pose is facing
             menuButton(icon: "arrow.left.arrow.right", action: {
                 isStaticPoseMirrored.toggle()
+                showFlashMessage("Mirrored pose")
             })
             
             // Button to toggle pose drag/scale gestures
             menuButton(icon: isStaticPoseLocked ? "lock.fill" : "lock.open.fill", action: {
-                    isStaticPoseLocked.toggle()
+                isStaticPoseLocked.toggle()
+                if (isStaticPoseLocked) {
+                    showFlashMessage("Pose dragging locked")
+                } else {
+                    showFlashMessage("Pose dragging unlocked")
+                }
                 
                 // cannot allow pose following and custom user resizing simultaneously
                 if (!isStaticPoseLocked) {
@@ -136,6 +178,12 @@ struct SlidingMenu: View {
             menuButton(icon: isStaticPoseFollowing ? "person.fill" : "person", action: {
                 isStaticPoseFollowing.toggle()
                 
+                if (isStaticPoseFollowing) {
+                    showFlashMessage("Auto pose follow on")
+                } else {
+                    showFlashMessage("Auto pose follow off")
+                }
+                
                 // cannot allow pose following and custom user resizing simultaneously
                 if (isStaticPoseFollowing) {
                     isStaticPoseLocked = true
@@ -145,8 +193,14 @@ struct SlidingMenu: View {
             // Button for toggling the static pose's reference image
             menuButton(icon: isReferenceImgShowing ? "rectangle.stack.fill.badge.person.crop" : "rectangle.stack.badge.person.crop", action: {
                 isReferenceImgShowing.toggle()
+                
+                if (isReferenceImgShowing) {
+                    showFlashMessage("Showing reference image")
+                } else {
+                    showFlashMessage("Reference image hidden")
+                }
             })
-
+            
         }
     }
     
