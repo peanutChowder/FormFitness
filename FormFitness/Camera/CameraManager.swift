@@ -84,15 +84,25 @@ class CameraManager: NSObject, ObservableObject {
             return nil
         }
         
+        // calculate a scaling factor to magnify the static pose pixel buffer by without stretching
+        // the image in one axis or overflowing the screen size
+        guard let originalImgSize = PerfectFormManager.shared.perfectForms[self.currentPose]?.image.size else { return nil }
+        let scalar = calcMaxImageScalingWithoutOverflow(fullViewSize: UIScreen.main.bounds.size, imgSize: originalImgSize)
+        logger.info("CameraManager: Static pose scaled \(scalar)x. Original size \(originalImgSize.width)x\(originalImgSize.height), screen size: \(UIScreen.main.bounds.size.width)x\(UIScreen.main.bounds.size.height)")
+        let scaledPoseSize = CGSize(
+            width: originalImgSize.width * scalar * UIScreen.main.scale,
+            height: originalImgSize.height * scalar * UIScreen.main.scale
+        )
+        
         UIGraphicsBeginImageContextWithOptions(self.pixelBufferSize, false, 1.0)
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
         
-        #warning ("TODO: fix image sizing")
         context.setFillColor(UIColor.black.withAlphaComponent(0.0).cgColor)
-        context.fill(CGRect(origin: .zero, size: self.pixelBufferSize))
-        
+        context.fill(CGRect(origin: .zero, size: scaledPoseSize))
+
         // Draw static pose
-        poseDetector.drawStaticPose(context: context, staticPose: pose, imageSize: self.pixelBufferSize)
+        poseDetector.drawStaticPose(context: context, staticPose: pose, imageSize: scaledPoseSize)
+
         
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
@@ -138,6 +148,12 @@ class CameraManager: NSObject, ObservableObject {
         DispatchQueue.main.async {
             self.staticPoseCenter = CGPoint(x: self.cameraViewSize.width / 2, y: self.cameraViewSize.height / 2)
         }
+    }
+    func calcMaxImageScalingWithoutOverflow(fullViewSize: CGSize, imgSize: CGSize) -> CGFloat {
+        let scaleWidth = fullViewSize.width / imgSize.width
+        let scaleHeight = fullViewSize.height / imgSize.height
+        
+        return min(scaleWidth, scaleHeight)
     }
 }
 
