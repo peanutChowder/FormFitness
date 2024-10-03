@@ -142,7 +142,7 @@ struct LivePoseView: View {
                             geometry in
                             Image(uiImage: staticPose)
                                 .resizable()
-                                .aspectRatio(contentMode: .fill)
+                                .aspectRatio(contentMode: .fit)
                                 .edgesIgnoringSafeArea(.all)
                                 .position(isStaticPoseFollowing ? cameraManager.staticPoseCenter : staticPosePosition)
                                 .scaleEffect(staticPoseScale)
