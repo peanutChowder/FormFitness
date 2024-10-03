@@ -92,7 +92,7 @@ class CameraManager: NSObject, ObservableObject {
         context.fill(CGRect(origin: .zero, size: self.pixelBufferSize))
         
         // Draw static pose
-        poseDetector.drawStaticPose(context: context, perfectFormPose: pose, imageSize: self.pixelBufferSize)
+        poseDetector.drawStaticPose(context: context, staticPose: pose, imageSize: self.pixelBufferSize)
         
         let result = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()

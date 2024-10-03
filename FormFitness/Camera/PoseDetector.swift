@@ -40,13 +40,13 @@ class PoseDetector {
         }
     }
     
-    func drawStaticPose(context: CGContext, perfectFormPose: VNHumanBodyPoseObservation? = nil, imageSize: CGSize) {
+    func drawStaticPose(context: CGContext, staticPose: VNHumanBodyPoseObservation? = nil, imageSize: CGSize) {
         // Draw perfect form pose lines
-        if let perfectFormPose = perfectFormPose {
+        if let staticPose = staticPose {
             context.setStrokeColor(PoseColors.staticPoseLimb)
             context.setLineWidth(staticPoseWidth)
             drawPoseOverlay(
-                pose: perfectFormPose,
+                pose: staticPose,
                 on: context,
                 imageSize: imageSize,
                 headColor: PoseColors.staticPoseHead,
