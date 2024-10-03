@@ -20,9 +20,7 @@ struct SlidingMenu: View {
     @Binding var poseOverlayScale: CGFloat
     @Binding var isStaticPoseResetClicked: Bool
     @Binding var isReferenceImgShowing: Bool
-    
-    @State private var isResetButtonSpinning = false
-    
+        
     // attributes for flashing description of clicked button
     @State private var flashMessage: String?
     @State private var isShowingFlash = false
