@@ -87,8 +87,9 @@ class CameraManager: NSObject, ObservableObject {
         // calculate a scaling factor to magnify the static pose pixel buffer by without stretching
         // the image in one axis or overflowing the screen size
         guard let originalImgSize = PerfectFormManager.shared.perfectForms[self.currentPose]?.image.size else { return nil }
-        let scalar = calcMaxImageScalingWithoutOverflow(fullViewSize: UIScreen.main.bounds.size, imgSize: originalImgSize)
-        logger.info("CameraManager: Static pose scaled \(scalar)x. Original size \(originalImgSize.width)x\(originalImgSize.height), screen size: \(UIScreen.main.bounds.size.width)x\(UIScreen.main.bounds.size.height)")
+        let screenSize = UIScreen.main.bounds.size
+        let scalar = calcMaxImageScalingWithoutOverflow(fullViewSize: screenSize, imgSize: originalImgSize)
+        logger.info("CameraManager: Static pose scaled \(scalar)x. Original size \(originalImgSize.width)x\(originalImgSize.height), screen size: \(screenSize.width)x\(screenSize.height)")
         let scaledPoseSize = CGSize(
             width: originalImgSize.width * scalar * UIScreen.main.scale,
             height: originalImgSize.height * scalar * UIScreen.main.scale
@@ -96,7 +97,7 @@ class CameraManager: NSObject, ObservableObject {
         
         UIGraphicsBeginImageContextWithOptions(self.pixelBufferSize, false, 1.0)
         guard let context = UIGraphicsGetCurrentContext() else { return nil }
-        
+          
         context.setFillColor(UIColor.black.withAlphaComponent(0.0).cgColor)
         context.fill(CGRect(origin: .zero, size: scaledPoseSize))
 
