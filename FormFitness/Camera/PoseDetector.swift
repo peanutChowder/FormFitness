@@ -69,7 +69,6 @@ class PoseDetector {
         )
     }
     
-    #warning("experimental")
     func drawLivePoseColorRating(
         pose: VNHumanBodyPoseObservation,
         staticPose: VNHumanBodyPoseObservation,
@@ -151,7 +150,6 @@ class PoseDetector {
         drawJointIndicator(for: .rightAnkle, in: pose, on: context, size: imageSize, jointIndicatorRadius: 20, color: feetColor)
     }
     
-    #warning("Experimental")
     private func drawJointIndicatorColorRating(for joint: VNHumanBodyPoseObservation.JointName,
                                                in pose: VNHumanBodyPoseObservation,
                                                staticPose: VNHumanBodyPoseObservation,
@@ -201,7 +199,6 @@ class PoseDetector {
         context.fillPath()
     }
     
-#warning("experimental")
     private func jointMatchPercentage(
         joint: VNHumanBodyPoseObservation.JointName,
         in pose: VNHumanBodyPoseObservation,
@@ -224,7 +221,6 @@ class PoseDetector {
         return max(0, min(1, matchPercentage)) // Clamp between 0 and 1
     }
     
-#warning("experimental")
     private func colorForMatchPercentage(_ percentage: CGFloat) -> UIColor {
         let red: CGFloat
         let green: CGFloat
@@ -242,7 +238,6 @@ class PoseDetector {
         return UIColor(red: red, green: green, blue: 0, alpha: 1)
     }
     
-#warning("experimental")
     private func drawLineColorRating(from startJoint: VNHumanBodyPoseObservation.JointName,
                                      to endJoint: VNHumanBodyPoseObservation.JointName,
                                      in pose: VNHumanBodyPoseObservation,
