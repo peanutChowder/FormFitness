@@ -13,28 +13,32 @@ struct LivePoseView: View {
     var exercise: Exercise
     @Environment(\.presentationMode) var presentationMode
     @StateObject private var cameraManager = CameraManager()
+    
+    // orientation related attributes
     @State private var orientation = UIDeviceOrientation.unknown
     @State private var showRotationPromptView = false
     
-    // static pose attributes
-    @State private var isStaticPoseLocked = true
-    @State private var isStaticPoseMirrored = false
+    // static pose dragging & zooming
     @State private var staticPosePosition: CGPoint = .zero
     @State private var staticPoseScale: CGFloat = 1.0
-    @State private var isStaticPoseFollowing = false
-    
-    @State private var isMenuExpanded = false
-    @State private var isStaticPoseResetClicked = false
-    
     @GestureState private var fingerLocation: CGPoint? = nil
     @GestureState private var startLocation: CGPoint? = nil
     @State private var lastDragPosition: CGPoint? = nil
     
+    // Menu-driven attributes
+    @State private var isStaticPoseFollowing = false
+    @State private var isStaticPoseLocked = true
+    @State private var isStaticPoseMirrored = false
+    @State private var isMenuExpanded = false
+    @State private var isStaticPoseResetClicked = false
+    
     var body: some View {
         GeometryReader { geometry in
+            // Show user with prompt to rotate device to a supported orientation
             if showRotationPromptView {
                 RotationPromptView(supportedOrientations: getSupportedOrientationsString())
             } else {
+                // Show user pose overlay view
                 ZStack {
                     cameraView()
                     SlidingMenu(
