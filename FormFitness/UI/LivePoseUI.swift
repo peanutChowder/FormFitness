@@ -19,6 +19,7 @@ struct SlidingMenu: View {
     @Binding var isStaticPoseMirrored: Bool
     @Binding var poseOverlayScale: CGFloat
     @Binding var isStaticPoseResetClicked: Bool
+    @Binding var isReferenceImgShowing: Bool
     
     @State private var isResetButtonSpinning = false
     
@@ -141,14 +142,10 @@ struct SlidingMenu: View {
                 }
             })
             
-            // Dummy buttons
-            menuButton(icon: "square.and.arrow.up", action: {})
-            menuButton(icon: "square.and.arrow.up", action: {})
-            menuButton(icon: "square.and.arrow.up", action: {})
-            menuButton(icon: "square.and.arrow.up", action: {})
-            menuButton(icon: "square.and.arrow.up", action: {})
-            menuButton(icon: "square.and.arrow.up", action: {})
-
+            // Button for toggling the static pose's reference image
+            menuButton(icon: isReferenceImgShowing ? "rectangle.stack.fill.badge.person.crop" : "rectangle.stack.badge.person.crop", action: {
+                isReferenceImgShowing.toggle()
+            })
 
         }
     }

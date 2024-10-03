@@ -32,7 +32,7 @@ struct LivePoseView: View {
     @State private var isMenuExpanded = false
     @State private var isStaticPoseResetClicked = false
     
-    @State private var showReferenceImg = true
+    @State private var isReferenceImgShowing = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -44,7 +44,7 @@ struct LivePoseView: View {
                 ZStack {
                     cameraLivePoseView()
                     
-                    if showReferenceImg, let referenceImg = PerfectFormManager.shared.perfectForms[exercise.imageName]?.image {
+                    if isReferenceImgShowing, let referenceImg = PerfectFormManager.shared.perfectForms[exercise.imageName]?.image {
                         Image(uiImage: referenceImg)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
@@ -64,7 +64,8 @@ struct LivePoseView: View {
                         isStaticPoseLocked: $isStaticPoseLocked,
                         isStaticPoseMirrored: $isStaticPoseMirrored,
                         poseOverlayScale: $staticPoseScale,
-                        isStaticPoseResetClicked: $isStaticPoseResetClicked
+                        isStaticPoseResetClicked: $isStaticPoseResetClicked,
+                        isReferenceImgShowing: $isReferenceImgShowing
                     )
                     .onChange(of: isStaticPoseFollowing) {
                         logger.info("LivePoseView: isStaticPoseFollowing set to '\(isStaticPoseFollowing)'")
