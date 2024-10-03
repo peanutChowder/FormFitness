@@ -63,7 +63,7 @@ struct SlidingMenu: View {
     private func menuContent(geometry: GeometryProxy, isPortrait: Bool) -> some View {
         ZStack {
             if isExpanded {
-                expandedMenu(isPortrait: isPortrait)
+                expandedMenu(isPortrait: isPortrait, geometry: geometry)
             } else {
                 collapsedMenu(isPortrait: isPortrait)
             }
@@ -77,22 +77,31 @@ struct SlidingMenu: View {
         .offset(isPortrait ? CGSize(width: 0, height: isExpanded ? -40 : 0) : CGSize(width: isExpanded ? -40 : 0, height: 0))
     }
     
-    private func expandedMenu(isPortrait: Bool) -> some View {
+    private func expandedMenu(isPortrait: Bool, geometry: GeometryProxy) -> some View {
         Group {
             if isPortrait {
                 VStack(spacing: 1) {
-                    HStack(spacing: 30) {
-                        menuButtons
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 30) {
+                            menuButtons
+                        }
+                        .padding(.horizontal, 20)
                     }
+                    .frame(height: 60)
                     .padding(.bottom, 8)
                     
                     closeButton(systemName: "chevron.down")
                 }
             } else {
                 HStack(spacing: 1) {
-                    VStack(spacing: 30) {
-                        menuButtons
+                    ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 30) {
+                            menuButtons
+                        }
+                        .padding(.vertical, 20)
                     }
+                    .frame(width: 60)
+                    
                     closeButton(systemName: "chevron.right")
                 }
             }
@@ -131,6 +140,16 @@ struct SlidingMenu: View {
                     isStaticPoseLocked = true
                 }
             })
+            
+            // Dummy buttons
+            menuButton(icon: "square.and.arrow.up", action: {})
+            menuButton(icon: "square.and.arrow.up", action: {})
+            menuButton(icon: "square.and.arrow.up", action: {})
+            menuButton(icon: "square.and.arrow.up", action: {})
+            menuButton(icon: "square.and.arrow.up", action: {})
+            menuButton(icon: "square.and.arrow.up", action: {})
+
+
         }
     }
     
